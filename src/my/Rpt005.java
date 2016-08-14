@@ -154,6 +154,7 @@ public class Rpt005 extends javax.swing.JDialog {
                    oCalc.cargarPozo(currWellId); 
                 }
                 tvd=rs.getDouble("tvd");
+                if (tvd<0) continue;
                 md=rs.getDouble("md");
                 dls=rs.getDouble("dls");
                 description=rs.getString("description");
