@@ -5,6 +5,8 @@
  */
 package my;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
@@ -21,8 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import miLibreria.ManejoDeCombos;
 import static miLibreria.ManejoDeCombos.modeloCombo;
@@ -47,8 +51,8 @@ public class Rpt005 extends javax.swing.JDialog {
     private final ManejoDeCombos oManejoDeCombos; 
     private final javax.swing.JComboBox jComboBoxSubSections = new javax.swing.JComboBox();
     private final DecimalFormat df = new DecimalFormat("#0.000");
-    private DefaultTableModel modelTable1;
     private boolean procesado=false;
+    private DefaultTableModel modelTable1, modelTable2, modelTable3;
     
     public Rpt005(java.awt.Frame parent, boolean modal,ManejoBDI o ) {
         super(parent, modal);
@@ -62,6 +66,7 @@ public class Rpt005 extends javax.swing.JDialog {
         oManejoDeCombos.llenaCombo(oBD,modeloCombo,DrillingSubSectionType.class,this.jComboBoxSubSections,"");
         jComboBoxSubSections.setEnabled(true);
         jComboBoxSubSections.setVisible(true);
+        this.jTable3.setDefaultRenderer (Object.class, new RenderComposicion());
         
     }
     
@@ -87,6 +92,8 @@ public class Rpt005 extends javax.swing.JDialog {
     private void procesar(){
         cursorEspera();
         procesarTabla1();
+        procesarTabla2();    
+        procesarTabla3(); 
         cursorNormal();
     }
           
@@ -176,7 +183,8 @@ public class Rpt005 extends javax.swing.JDialog {
                 resultado[row][col].sumaDLS(dls);
                 resultado[row][col].sumaPorcentajeSliding(porcentajeSliding);
                 promedio[row].suma(dls,porcentajeSliding, description);
-            }            
+            }
+            rs.close();            
         } catch (SQLException ex) {
             Logger.getLogger(Rpt005.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -213,9 +221,141 @@ public class Rpt005 extends javax.swing.JDialog {
         }
         procesado=true;
     }
+
+    private void procesarTabla2() {
+        String s="";
+        ResultSet rs;
+        Calculos oCalc;
+        oCalc=new Calculos(oBD);
+        double maxTVD=0.0;
+        double tvd=0.0,md=0.0, porcentajeArena=0.0;
+        String wellNombre="";
+        List<String> listOfColumnas = new ArrayList<>();
+        SumatoriaPorcentajeArena[][] resultado=null;
+        int rows=0, row=0,col=0;
+        long prevWellId=0, currWellId=0;
+        boolean primerRegistro=true;
         
-    public void exportar(int tab) {
-        HSSFSheet sheet=null;
+        modelTable2 = new DefaultTableModel();
+        jTable2.setModel(modelTable2);
+        
+        //Segmento tabla2
+       
+        s="SELECT CampoCliente.campoId, Well.macollaId, Well.id AS wellId, Well.nombre as wellNombre, Run.Id, Survey.id, SurveyPerMD.md, SurveyPerMD.tvd, SurveyPerMD.dls, BHA.tipoDT, DrillingSubSectionType.description\n" +
+        "FROM (BHA INNER JOIN (RunSubSection INNER JOIN ((Macolla INNER JOIN (SurveyPerMD INNER JOIN (Survey INNER JOIN (Run INNER JOIN (Sections INNER JOIN Well ON Sections.wellId = Well.id) ON Run.sectionId = Sections.id) ON Survey.runId = Run.Id) ON SurveyPerMD.surveyId = Survey.id) ON Macolla.id = Well.macollaId) INNER JOIN CampoCliente ON Macolla.campoClienteId = CampoCliente.id) ON RunSubSection.runID = Run.Id) ON BHA.runId = Run.Id) INNER JOIN DrillingSubSectionType ON RunSubSection.drillingSubSectionId = DrillingSubSectionType.id\n" +
+        "WHERE (((CampoCliente.campoId)="+campoId+") AND ((Well.macollaId)="+macollaId+") AND ((SurveyPerMD.md)>=[profundidadInicial] And (SurveyPerMD.md)<=[profundidadFinal]))\n" +
+        "ORDER BY Well.macollaId, Well.id, SurveyPerMD.tvd;";
+        
+        rs=oBD.select(s);
+        try {
+            while (rs.next()){
+                if (listOfColumnas.contains(rs.getString("wellNombre"))==false) {
+                    listOfColumnas.add(rs.getString("wellNombre"));
+                }
+                if (rs.getDouble("tvd")>maxTVD) maxTVD=rs.getDouble("tvd");
+            }
+            //Dimensiono el array de resultados primero que todo
+            rows=(int) Math.round(maxTVD/50);
+            rows += (maxTVD%50)>0 ? 1:0 ;
+            resultado=new SumatoriaPorcentajeArena[rows][listOfColumnas.size()];
+            row=0;
+            for (int i=0;i<= resultado.length-1;i++){
+                for (int j=0;j<=resultado[i].length-1;j++){
+                    resultado[i][j]=new SumatoriaPorcentajeArena(row,row+50,listOfColumnas.get(j));
+                }
+                row+=50;
+            }
+            
+            //Ahora leo los datos para sumarizarlos 
+            rs.beforeFirst();
+            while (rs.next()){
+                if (primerRegistro) {
+                    primerRegistro=false;
+                    currWellId=rs.getLong("wellId");
+                    prevWellId=currWellId;
+                    oCalc.cargarPozo(currWellId);
+                } else {
+                  prevWellId=currWellId;
+                  currWellId=rs.getLong("wellId");  
+                }
+                if (prevWellId!=currWellId) {
+                   oCalc.cargarPozo(currWellId); 
+                }
+                tvd=rs.getDouble("tvd");
+                if (tvd<0) continue;
+                md=rs.getDouble("md");
+                wellNombre=rs.getString("wellNombre");
+                porcentajeArena=oCalc.getPorcentajeArena(md);
+                //ubico la fila y la columna en el array de resultados
+                for (int r=0;r<=resultado.length-1;r++){
+                    if (tvd>=resultado[r][0].getTvdDesde() && tvd<=resultado[r][0].getTvdHasta()){
+                        row=r;
+                        break;
+                    }
+                }
+                col=listOfColumnas.indexOf(wellNombre);
+                resultado[row][col].sumaPorcentajeArena(porcentajeArena);
+            }  
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Rpt005.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Ya con los resultados parciales calculo el dls al 100% y lo plasmo en pantalla
+        //Recorro primero por columnas (Pozos) y las agrego al modelo
+        modelTable2.addColumn("TVD");
+        for (String pozo : listOfColumnas) {
+            modelTable2.addColumn(pozo);
+        }
+
+        Object[] fila=new Object[resultado[0].length+1];
+        int offset=0;
+        
+        for (row=0;row<=resultado.length-1;row++) {
+            offset=0;
+            fila=new Object[resultado[row].length+1];
+            fila[offset]=resultado[row][0].getTvdHasta();
+            offset=1;
+            for (col=0;col<=resultado[0].length-1;col++){
+                if (resultado[row][col].getPromedioPorcentajeArena()>0)
+                   fila[offset+col]=resultado[row][col].getPromedioPorcentajeArena();
+            }
+            offset+=col;
+            modelTable2.addRow(fila);
+        }
+        procesado=true;
+    }
+    
+    private void procesarTabla3() { 
+        int row=0,col=0;
+        Object colValue=null;
+        modelTable3 = new DefaultTableModel();
+        jTable3.setModel(modelTable3);
+        for (col=0;col<=modelTable2.getColumnCount()-1;col++){
+            modelTable3.addColumn(modelTable2.getColumnName(col));
+        }
+        Object[] fila=null;
+        for (row=0;row<=modelTable2.getRowCount()-1;row++){
+            fila=new Object[modelTable2.getColumnCount()];
+            fila=getRowDataFromModel(modelTable2,row);
+            modelTable3.addRow(fila);
+            for (col=1;col<=modelTable3.getColumnCount()-1;col++){
+                colValue=modelTable2.getValueAt(row, col);
+                if (colValue!=null)
+                    modelTable3.setValueAt(composicion((double) colValue ),row, col);
+            }
+        }
+    }
+    
+    private Object[] getRowDataFromModel(DefaultTableModel model, int row){
+        Object[] result=new Object[model.getColumnCount()];
+        for (int col=0;col<=model.getColumnCount()-1;col++){
+            result[col]=model.getValueAt(row, col);
+        }
+        return result;
+    }
+    
+    public void exportar() {
+        HSSFSheet sheet1=null,sheet2=null,sheet3=null;
         HSSFRow[] rowhead=null ;
         HSSFWorkbook workbook = null; 
         int rows=0;
@@ -236,25 +376,70 @@ public class Rpt005 extends javax.swing.JDialog {
         } catch (NullPointerException ex) {            
             return;
         } 
-        if (tab==0){
-            rows=this.modelTable1.getRowCount()+1;
-            cols=this.modelTable1.getColumnCount();
-            rowhead=new HSSFRow[rows+1] ;
-            workbook = new HSSFWorkbook(); 
-            sheet = workbook.createSheet("DLS vs TVD");            
-        }
-        rowhead[0] = sheet.createRow((short) 0);
+        
+        workbook = new HSSFWorkbook(); 
+
+        //First Tab
+        rows=this.modelTable1.getRowCount()+1;
+        cols=this.modelTable1.getColumnCount();
+        rowhead=new HSSFRow[rows+1] ;
+        sheet1 = workbook.createSheet("DLS vs TVD"); 
+        rowhead[0] = sheet1.createRow((short) 0);
         for (int j=0;j<=cols-1;j++) {
             rowhead[0].createCell(j).setCellValue(modelTable1.getColumnName(j));
         }        
         for (int i=1;i<=rows-1;i++) {
             row=i;
-            rowhead[row] = sheet.createRow((short) row);
+            rowhead[row] = sheet1.createRow((short) row);
             for (int j=0;j<=cols-1;j++) {
                 if (modelTable1.getValueAt(i-1, j)!=null)
                     rowhead[row].createCell(j).setCellValue((double) modelTable1.getValueAt(i-1, j));
             }
         }
+        
+        //Second Tab
+        rows=this.modelTable2.getRowCount()+1;
+        cols=this.modelTable2.getColumnCount();
+        rowhead=new HSSFRow[rows+1] ;
+        sheet2 = workbook.createSheet("TVD vs %Arena"); 
+        rowhead[0] = sheet2.createRow((short) 0);
+        for (int j=0;j<=cols-1;j++) {
+            rowhead[0].createCell(j).setCellValue(modelTable2.getColumnName(j));
+        }        
+        for (int i=1;i<=rows-1;i++) {
+            row=i;
+            rowhead[row] = sheet2.createRow((short) row);
+            for (int j=0;j<=cols-1;j++) {
+                if (modelTable2.getValueAt(i-1, j)!=null)
+                    rowhead[row].createCell(j).setCellValue((double) modelTable2.getValueAt(i-1, j));
+            }
+        }
+        
+        //Third Tab
+        rows=this.modelTable3.getRowCount()+1;
+        cols=this.modelTable3.getColumnCount();
+        rowhead=new HSSFRow[rows+1] ;
+        sheet3 = workbook.createSheet("TVD vs Formation"); 
+        rowhead[0] = sheet3.createRow((short) 0);
+        for (int j=0;j<=cols-1;j++) {
+            rowhead[0].createCell(j).setCellValue(modelTable3.getColumnName(j));
+        }        
+        for (int i=1;i<=rows-1;i++) {
+            row=i;
+            rowhead[row] = sheet3.createRow((short) row);
+            for (int j=0;j<=cols-1;j++) {
+                if (j==0) {
+                    if (modelTable3.getValueAt(i-1, j)!=null)
+                        rowhead[row].createCell(j).setCellValue((double) modelTable3.getValueAt(i-1, j));                    
+                } else {
+                    if (modelTable3.getValueAt(i-1, j)!=null)
+                        rowhead[row].createCell(j).setCellValue((String) modelTable3.getValueAt(i-1, j));
+                }
+            }
+        }
+        
+        msgbox("Exportacion de datos realizada con exito.","Field Summary Report");
+        
         try {
             FileOutputStream fileOut;            
             fileOut = new FileOutputStream(archivo);
@@ -262,9 +447,26 @@ public class Rpt005 extends javax.swing.JDialog {
             fileOut.close();
         } catch (Exception ex) {
                 msgbox("Ocurrio un error, posiblemente el archivo de destino se encuentra abierto","Error",true);
-        }        
-    }
+        } 
         
+    }
+
+    public String composicion(double porcentajeArena) {
+        String composicion="";
+        if (porcentajeArena>0) {
+            if (porcentajeArena>=80) {
+                composicion="Sand";
+            } else
+            {
+                if (porcentajeArena>=50) {
+                    composicion="Shale-Sand";
+                } else
+                    composicion="Shale";
+            } 
+        }
+        return composicion;
+    }
+    
     public void cursorNormal(){
         this.setCursor(Cursor.getDefaultCursor());
     }
@@ -319,7 +521,11 @@ public class Rpt005 extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable3 = new javax.swing.JTable();
         jButtonExportar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -399,9 +605,35 @@ public class Rpt005 extends javax.swing.JDialog {
         jTabbedPane1.addTab("DLS vs TVD", jPanel1);
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(jTable2);
+
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 400));
+
         jTabbedPane1.addTab("TVD vs % arena", jPanel2);
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane3.setViewportView(jTable3);
+
+        jPanel3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 400));
+
         jTabbedPane1.addTab("TVD vs Clasificación", jPanel3);
 
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 840, 430));
@@ -451,7 +683,7 @@ public class Rpt005 extends javax.swing.JDialog {
     }//GEN-LAST:event_jTabbedPane1StateChanged
 
     private void jButtonExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportarActionPerformed
-        exportar(this.jTabbedPane1.getSelectedIndex());
+        exportar();
     }//GEN-LAST:event_jButtonExportarActionPerformed
 
     /**
@@ -515,8 +747,12 @@ public class Rpt005 extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
+    private javax.swing.JTable jTable3;
     // End of variables declaration//GEN-END:variables
 }
 
@@ -647,5 +883,68 @@ class PromedioDLS {
             return (sumatoriaDLSTurnLeft/nNoTurn)*100/(sumatoriaPorcentajeSlidingTurnLeft/nNoTurn);
         else return 0;
     } 
+}
+
+class SumatoriaPorcentajeArena{
+    private double tvdDesde=0.0;
+    private double tvdHasta=0.0;
+    private double sumatoriaPorcentajeArena=0.0;
+    private int nPorcentajeArena=0;
+
+    public SumatoriaPorcentajeArena(double tvdDesde_,double tvdHasta_,String wellNombre_){
+        tvdDesde=tvdDesde_;
+        tvdHasta=tvdHasta_;
+        sumatoriaPorcentajeArena=0.0;
+        nPorcentajeArena=0;
+    }
+    public void sumaPorcentajeArena(double porcentajeArena){
+        if (porcentajeArena>0) {
+            sumatoriaPorcentajeArena+=porcentajeArena;
+            nPorcentajeArena++;
+        }
+    }    
+    public double getSumatoriaPorcentajeArena(){
+        return sumatoriaPorcentajeArena;
+    }
+    public double getPromedioPorcentajeArena(){
+        if (nPorcentajeArena>0)
+            return sumatoriaPorcentajeArena/nPorcentajeArena;
+        else return 0;
+    }
+    public double getTvdDesde(){        
+        return tvdDesde;
+    }
+    public double getTvdHasta(){        
+        return tvdHasta;
+    }
+}
+
+class RenderComposicion extends DefaultTableCellRenderer
+{
+   public Component getTableCellRendererComponent(JTable table,
+      Object value,
+      boolean isSelected,
+      boolean hasFocus,
+      int row,
+      int column)
+   {
+        super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);
+        if (value==null) return this;
+
+        if ("Sand".equals(value.toString().trim())) {
+            this.setBackground(Color.LIGHT_GRAY);
+            this.setForeground(Color.YELLOW);                  
+        }else if ("Shale".equals(value.toString().trim())) {
+            this.setBackground(Color.LIGHT_GRAY);
+            this.setForeground(Color.WHITE);                 
+        } else if ("Shale-Sand".equals(value.toString().trim())) {
+            this.setBackground(Color.LIGHT_GRAY);
+            this.setForeground(Color.red);                 
+        } else {
+            this.setBackground(Color.LIGHT_GRAY);
+            this.setForeground(Color.BLACK);          
+        }           
+      return this;
+   }
 }
 
