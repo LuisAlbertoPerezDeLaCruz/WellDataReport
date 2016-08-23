@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
@@ -38,10 +40,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeriesCollection; 
 
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 
 
 /**
@@ -52,6 +50,7 @@ public class Rpt001 extends javax.swing.JDialog {
     public miLibreria.bd.ManejoBDI oBD;
     private ManejoDeCombos oManejoDeCombos;
     public double factorDesde, factorHasta;
+    public double tvdDesde=0.0, tvdHasta=0.0;
     public long clienteId=0,campoId=0, macollaId=0,sectionSubTypeId=0;
     public Long[] aCorridas;
     public int cantCorridas;
@@ -75,13 +74,14 @@ public class Rpt001 extends javax.swing.JDialog {
         modeloCorridas=(DefaultTableModel) this.jTableCorridas.getModel();
         modeloSlideSheet=(DefaultTableModel) this.jTableSlideSheet.getModel();
         modeloLAS=(DefaultTableModel) this.jTableLAS.getModel();
+        estadoDistanciaCtrls();
     }
     
     
     public void seteosIniciales() {
         int tiempoEnMilisegundos = 500;
         Timer timer = new Timer (tiempoEnMilisegundos, new ActionListener () { 
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
             boolean ok=true;
             factorDesde=0.0;
             factorHasta=0.0;
@@ -124,10 +124,57 @@ public class Rpt001 extends javax.swing.JDialog {
             if (sectionSubTypeId==0) ok=false;
             
             jButtonBuscarCorridas.setEnabled(ok);
+            
+            if (Rpt001.this.jTextFieldTVDDesde.getText().isEmpty()==false)
+                tvdDesde=Double.parseDouble(Rpt001.this.jTextFieldTVDDesde.getText());
+            if (Rpt001.this.jTextFieldTVDHasta.getText().isEmpty()==false)
+                tvdHasta=Double.parseDouble(Rpt001.this.jTextFieldTVDHasta.getText());
+            
+            //Añadido para el filtro del TVD
+            if (aCorridas==null){
+                Rpt001.this.jTextFieldTVDDesde.setEnabled(false);
+                Rpt001.this.jTextFieldTVDHasta.setEnabled(false);
+                Rpt001.this.jButtonFiltrar.setEnabled(false);
+                Rpt001.this.jTableCorridas.setEnabled(false);
+            } else {
+                if (aCorridas.length>0){
+                    Rpt001.this.jTextFieldTVDDesde.setEnabled(true);
+                    Rpt001.this.jTextFieldTVDHasta.setEnabled(true);
+                    Rpt001.this.jTableCorridas.setEnabled(true);
+                    if (tvdDesde >0 && tvdHasta >0)
+                        Rpt001.this.jButtonFiltrar.setEnabled(true);
+                    else
+                        Rpt001.this.jButtonFiltrar.setEnabled(false);                        
+                }                
+            } 
+            estadoDistanciaCtrls();
             pack();
         } 
         });
         timer.start();
+    }
+    
+    private void estadoDistanciaCtrls(){
+        boolean ok=false;
+        double longitud=0.0, latitud=0.0;
+        if (this.jToggleButtonDistance.isEnabled() && this.jToggleButtonDistance.isSelected()){
+            ok=true;
+        }
+        this.jLabelLatitud.setVisible(ok);
+        this.jLabelLongitud.setVisible(ok);
+        this.jLabelDistancia.setVisible(ok);
+        this.jTextFieldLatitud.setVisible(ok);
+        this.jTextFieldLongitud.setVisible(ok);
+        this.jButtonCalcular.setVisible(ok);
+        this.jLabelOrigen.setVisible(ok);
+        this.jButtonCalcular.setEnabled(false);
+        
+        if (this.jTextFieldLongitud.getText().isEmpty()==false)
+            longitud=Double.parseDouble(this.jTextFieldLongitud.getText());
+        if (this.jTextFieldLatitud.getText().isEmpty()==false)
+            latitud=Double.parseDouble(this.jTextFieldLatitud.getText());
+        if (longitud>0 && latitud>0)
+            this.jButtonCalcular.setEnabled(true);
     }
     
     private void buscarCorridas() {
@@ -204,6 +251,7 @@ public class Rpt001 extends javax.swing.JDialog {
         }
         this.jTableCorridas.setEnabled(true);
         this.jLabelMostrarBHA.setEnabled(false);
+        this.jToggleButtonDistance.setEnabled(false);
         this.jLabelGrafica.setEnabled(false);
         this.jLabelSlideSheet.setText("Slide Sheet");
     }
@@ -211,9 +259,15 @@ public class Rpt001 extends javax.swing.JDialog {
     private void limpiarTablaCorridas() {
         for (int i=0;i<=this.jTableCorridas.getRowCount()-1;i++) {
             for (int j=0;j<=this.jTableCorridas.getColumnCount()-1;j++) {
-                this.jTableCorridas.setValueAt("", i, j);
+                this.jTableCorridas.setValueAt("", i, j);                
             }
         }
+        aCorridas=null;
+        this.jTableCorridas.clearSelection();
+        limpiarTablaSurvey();
+        limpiarTablaPlan();
+        limpiarTablaSlideSheet();
+        limpiarTablaLAS();
     }
     
     private void limpiarTablaSurvey() {
@@ -255,6 +309,7 @@ public class Rpt001 extends javax.swing.JDialog {
         mostrarSlideSheet();
         mostrarLAS();
         this.jLabelMostrarBHA.setEnabled(true);
+        this.jToggleButtonDistance.setEnabled(true);
         this.jLabelGrafica.setEnabled(true);
     }
     
@@ -648,6 +703,36 @@ public class Rpt001 extends javax.swing.JDialog {
         limpiarTablaCorridas();
     }
     
+    private void filtrarCorridas(double tvdDesde, double tvdHasta) {
+        double tvdWork=0.0;
+        Object[][] aTablaCorridas=new Object[this.jTableCorridas.getRowCount()][this.jTableCorridas.getColumnCount()];
+        List<Long> listCorridasFiltradas = new ArrayList<>();
+        Long[] aCorridasBck=aCorridas;
+        int p=0;
+        for (int i=0;i<=this.jTableCorridas.getRowCount()-1;i++) {
+            for (int j=0;j<=this.jTableCorridas.getColumnCount()-1;j++) {
+                aTablaCorridas[i][j]=this.jTableCorridas.getValueAt(i, j);                
+            }
+        }
+        limpiarTablaCorridas();
+        for (int i=0;i<=aTablaCorridas.length-1;i++){
+            tvdWork=Double.parseDouble(aTablaCorridas[i][6].toString());
+            if (tvdWork>=tvdDesde && tvdWork<=tvdHasta) {                
+                for (int j=0;j<=aTablaCorridas[i].length-1;j++){
+                    this.jTableCorridas.setValueAt(aTablaCorridas[i][j], p, j);                    
+                }
+                listCorridasFiltradas.add(aCorridasBck[i]);
+                p++;                
+            }
+        }
+        modeloCorridas.setRowCount(p);
+        Object[] aCorridasWrk=listCorridasFiltradas.toArray();
+        aCorridas=new Long[aCorridasWrk.length];
+        for (int i=0;i<=aCorridasWrk.length-1;i++){
+            aCorridas[i]=Long.parseLong(aCorridasWrk[i].toString());
+        }
+    }
+    
     public Object na(Object o) {
         DecimalFormat df = new DecimalFormat("##########0.000");
         if (o.toString().contains(""+valorNulo)) {
@@ -665,6 +750,36 @@ public class Rpt001 extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(null, s,t,TrayIcon.MessageType.WARNING.ordinal());        
     }
 
+    private void calcularDistancia(){
+       String s="",origen="";
+       ResultSet rs;
+       double lat1=0.0, long1=0.0;
+       double lat2=0.0, long2=0.0;
+       double d=0.0;
+       int p=this.jTableCorridas.getSelectedRow();
+       long runId=aCorridas[p];
+       if (this.jTextFieldLongitud.getText().isEmpty()==false)
+           long2=Double.parseDouble(this.jTextFieldLongitud.getText());
+       if (this.jTextFieldLatitud.getText().isEmpty()==false)
+           lat2=Double.parseDouble(this.jTextFieldLatitud.getText());
+       s="SELECT Run.Id,Well.nombre, Well.locationLat, Well.locationLong\n" +
+            "FROM Run INNER JOIN Well ON Run.wellId = Well.id\n" +
+            "WHERE (((Run.Id)="+runId+"));";
+       rs=oBD.select(s);
+        try {
+            if (rs.next()){
+                lat1=rs.getDouble("locationLat");
+                long1=rs.getDouble("locationLong");
+                origen="Origen field: "+rs.getString("nombre")+", Lat:"+na(lat1)+", Long:"+na(long1);
+            }} catch (SQLException ex) {
+            Logger.getLogger(Rpt001.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (lat1>0 && lat2>0 && long1>0 && long2>0){
+            d=Math.sqrt(Math.pow((long2-long1),2)+Math.pow((lat2-lat1),2));
+        }
+        this.jLabelOrigen.setText(origen);
+        this.jLabelDistancia.setText("Distancia: "+na(d));
+    }
 
 
     /**
@@ -715,6 +830,18 @@ public class Rpt001 extends javax.swing.JDialog {
         jLabelPorcentajeArena = new javax.swing.JLabel();
         jLabelType = new javax.swing.JLabel();
         jLabelMostrarBHA = new javax.swing.JLabel();
+        jTextFieldTVDHasta = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jTextFieldTVDDesde = new javax.swing.JTextField();
+        jButtonFiltrar = new javax.swing.JButton();
+        jToggleButtonDistance = new javax.swing.JToggleButton();
+        jTextFieldLongitud = new javax.swing.JTextField();
+        jTextFieldLatitud = new javax.swing.JTextField();
+        jLabelLatitud = new javax.swing.JLabel();
+        jButtonCalcular = new javax.swing.JButton();
+        jLabelLongitud = new javax.swing.JLabel();
+        jLabelDistancia = new javax.swing.JLabel();
+        jLabelOrigen = new javax.swing.JLabel();
 
         setTitle("Well Excecution Data");
         setMinimumSize(new java.awt.Dimension(1200, 600));
@@ -1383,7 +1510,7 @@ public class Rpt001 extends javax.swing.JDialog {
         });
         jScrollPaneCorridas.setViewportView(jTableCorridas);
 
-        getContentPane().add(jScrollPaneCorridas, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 510, 150));
+        getContentPane().add(jScrollPaneCorridas, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 510, 140));
 
         jLabel4.setText("Plan");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 120, -1, -1));
@@ -1435,7 +1562,7 @@ public class Rpt001 extends javax.swing.JDialog {
         getContentPane().add(jScrollPaneSurvey, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 220, 650, 70));
 
         jLabelSlideSheet.setText("Slide Sheet");
-        getContentPane().add(jLabelSlideSheet, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 306, -1, -1));
+        getContentPane().add(jLabelSlideSheet, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, -1, -1));
 
         jTableSlideSheet.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1911,7 +2038,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jLabelGraficaMouseExited(evt);
             }
         });
-        getContentPane().add(jLabelGrafica, new org.netbeans.lib.awtextra.AbsoluteConstraints(1130, 310, 50, 20));
+        getContentPane().add(jLabelGrafica, new org.netbeans.lib.awtextra.AbsoluteConstraints(1130, 300, 50, 20));
 
         jLabelPorcentajeArena.setText("% Arena:");
         getContentPane().add(jLabelPorcentajeArena, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 310, -1, -1));
@@ -1934,7 +2061,106 @@ public class Rpt001 extends javax.swing.JDialog {
                 jLabelMostrarBHAMouseExited(evt);
             }
         });
-        getContentPane().add(jLabelMostrarBHA, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 150, -1));
+        getContentPane().add(jLabelMostrarBHA, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 120, 150, -1));
+
+        jTextFieldTVDHasta.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldTVDHasta.setEnabled(false);
+        jTextFieldTVDHasta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldTVDHastaActionPerformed(evt);
+            }
+        });
+        jTextFieldTVDHasta.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextFieldTVDHastaKeyTyped(evt);
+            }
+        });
+        getContentPane().add(jTextFieldTVDHasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 120, 60, -1));
+
+        jLabel6.setText("Rango TVD:");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 120, -1, -1));
+
+        jTextFieldTVDDesde.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldTVDDesde.setEnabled(false);
+        jTextFieldTVDDesde.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldTVDDesdeActionPerformed(evt);
+            }
+        });
+        jTextFieldTVDDesde.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextFieldTVDDesdeKeyTyped(evt);
+            }
+        });
+        getContentPane().add(jTextFieldTVDDesde, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, 60, -1));
+
+        jButtonFiltrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/my/filter.png"))); // NOI18N
+        jButtonFiltrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButtonFiltrar.setEnabled(false);
+        jButtonFiltrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonFiltrarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButtonFiltrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 120, 20, 20));
+
+        jToggleButtonDistance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/my/distance.png"))); // NOI18N
+        jToggleButtonDistance.setEnabled(false);
+        jToggleButtonDistance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButtonDistanceActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jToggleButtonDistance, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 40, 40));
+
+        jTextFieldLongitud.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldLongitud.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldLongitudActionPerformed(evt);
+            }
+        });
+        jTextFieldLongitud.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextFieldLongitudKeyTyped(evt);
+            }
+        });
+        getContentPane().add(jTextFieldLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 530, 90, -1));
+
+        jTextFieldLatitud.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldLatitud.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldLatitudActionPerformed(evt);
+            }
+        });
+        jTextFieldLatitud.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextFieldLatitudKeyTyped(evt);
+            }
+        });
+        getContentPane().add(jTextFieldLatitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 530, 90, -1));
+
+        jLabelLatitud.setText("Latitud:");
+        getContentPane().add(jLabelLatitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 530, -1, -1));
+
+        jButtonCalcular.setText("Calc");
+        jButtonCalcular.setEnabled(false);
+        jButtonCalcular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCalcularActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButtonCalcular, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 530, 60, -1));
+
+        jLabelLongitud.setText("Longitud:");
+        getContentPane().add(jLabelLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 530, -1, -1));
+
+        jLabelDistancia.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabelDistancia.setText("Distancia:");
+        getContentPane().add(jLabelDistancia, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 530, 190, -1));
+
+        jLabelOrigen.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabelOrigen.setText("Origen:");
+        getContentPane().add(jLabelOrigen, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 490, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1952,12 +2178,14 @@ public class Rpt001 extends javax.swing.JDialog {
     }//GEN-LAST:event_jRadioButtonMacollaActionPerformed
 
     private void jComboBoxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClientesActionPerformed
+        limpiarTablaCorridas();
         clienteId=oManejoDeCombos.getComboID(this.jComboBoxClientes);
         String s="SELECT campoId,campoNombre from ConsultaCampoCliente1 WHERE clienteId="+clienteId;
         oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Seleccione Campo");
     }//GEN-LAST:event_jComboBoxClientesActionPerformed
 
     private void jComboBoxCampoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCampoActionPerformed
+        limpiarTablaCorridas();
         clienteId=oManejoDeCombos.getComboID(this.jComboBoxClientes);
         campoId=oManejoDeCombos.getComboID(this.jComboBoxCampo);
         String s="SELECT macollaId,macollaNombre from ConsultaMacolla1 WHERE clienteId="+clienteId + " AND campoId="+campoId;
@@ -1965,6 +2193,7 @@ public class Rpt001 extends javax.swing.JDialog {
     }//GEN-LAST:event_jComboBoxCampoActionPerformed
 
     private void jComboBoxMacollaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxMacollaActionPerformed
+        limpiarTablaCorridas();
         macollaId=oManejoDeCombos.getComboID(this.jComboBoxMacolla);
     }//GEN-LAST:event_jComboBoxMacollaActionPerformed
 
@@ -1996,7 +2225,10 @@ public class Rpt001 extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonBuscarCorridasActionPerformed
 
     private void jTableCorridasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableCorridasMouseClicked
-       mostrarInfo();
+       if (jTableCorridas.isEnabled()){
+            mostrarInfo();
+            calcularDistancia();
+       }
     }//GEN-LAST:event_jTableCorridasMouseClicked
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
@@ -2048,6 +2280,50 @@ public class Rpt001 extends javax.swing.JDialog {
         if (this.factorHasta<0) this.jTextFieldDlsHasta.setText("");
     }//GEN-LAST:event_jRadioButtonDlsActionPerformed
 
+    private void jTextFieldTVDHastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldTVDHastaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldTVDHastaActionPerformed
+
+    private void jTextFieldTVDHastaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldTVDHastaKeyTyped
+        oNumeros.soloDobles(evt);
+    }//GEN-LAST:event_jTextFieldTVDHastaKeyTyped
+
+    private void jTextFieldTVDDesdeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldTVDDesdeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldTVDDesdeActionPerformed
+
+    private void jTextFieldTVDDesdeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldTVDDesdeKeyTyped
+        oNumeros.soloDobles(evt);
+    }//GEN-LAST:event_jTextFieldTVDDesdeKeyTyped
+
+    private void jButtonFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFiltrarActionPerformed
+        filtrarCorridas(Double.parseDouble(this.jTextFieldTVDDesde.getText()),Double.parseDouble(this.jTextFieldTVDHasta.getText()));
+    }//GEN-LAST:event_jButtonFiltrarActionPerformed
+
+    private void jTextFieldLongitudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldLongitudActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldLongitudActionPerformed
+
+    private void jTextFieldLongitudKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldLongitudKeyTyped
+        oNumeros.soloDobles(evt);
+    }//GEN-LAST:event_jTextFieldLongitudKeyTyped
+
+    private void jTextFieldLatitudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldLatitudActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldLatitudActionPerformed
+
+    private void jTextFieldLatitudKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldLatitudKeyTyped
+        oNumeros.soloDobles(evt);
+    }//GEN-LAST:event_jTextFieldLatitudKeyTyped
+
+    private void jButtonCalcularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCalcularActionPerformed
+        calcularDistancia();
+    }//GEN-LAST:event_jButtonCalcularActionPerformed
+
+    private void jToggleButtonDistanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonDistanceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jToggleButtonDistanceActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2095,6 +2371,8 @@ public class Rpt001 extends javax.swing.JDialog {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     public javax.swing.JButton jButtonBuscarCorridas;
+    private javax.swing.JButton jButtonCalcular;
+    private javax.swing.JButton jButtonFiltrar;
     private javax.swing.JComboBox jComboBoxCampo;
     private javax.swing.JComboBox jComboBoxClientes;
     private javax.swing.JComboBox jComboBoxDrillingSubType;
@@ -2105,9 +2383,14 @@ public class Rpt001 extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelDistancia;
     private javax.swing.JLabel jLabelGrafica;
+    private javax.swing.JLabel jLabelLatitud;
+    private javax.swing.JLabel jLabelLongitud;
     private javax.swing.JLabel jLabelMostrarBHA;
+    private javax.swing.JLabel jLabelOrigen;
     private javax.swing.JLabel jLabelPorcentajeArena;
     private javax.swing.JLabel jLabelSlideSheet;
     private javax.swing.JLabel jLabelType;
@@ -2131,6 +2414,11 @@ public class Rpt001 extends javax.swing.JDialog {
     private javax.swing.JTable jTableSurvey;
     private javax.swing.JTextField jTextFieldDlsDesde;
     private javax.swing.JTextField jTextFieldDlsHasta;
+    private javax.swing.JTextField jTextFieldLatitud;
+    private javax.swing.JTextField jTextFieldLongitud;
+    private javax.swing.JTextField jTextFieldTVDDesde;
+    private javax.swing.JTextField jTextFieldTVDHasta;
+    private javax.swing.JToggleButton jToggleButtonDistance;
     // End of variables declaration//GEN-END:variables
 }
  
