@@ -28,6 +28,8 @@ import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import static miLibreria.GlobalConstants.valorNulo;
+import static miLibreria.GlobalConstants.valorNuloMuestra;
 import miLibreria.ManejoDeCombos;
 import static miLibreria.ManejoDeCombos.modeloCombo;
 import miLibreria.bd.Clientes;
@@ -53,12 +55,12 @@ public class Rpt005 extends javax.swing.JDialog {
     private final DecimalFormat df = new DecimalFormat("#0.000");
     private boolean procesado=false;
     private DefaultTableModel modelTable1, modelTable2, modelTable3;
+    private WellDescExt[] aWellDescExt;
     
     public Rpt005(java.awt.Frame parent, boolean modal,ManejoBDI o ) {
         super(parent, modal);
         initComponents();
         setearTimer();
-
         oBD=o;
         oManejoDeCombos = new ManejoDeCombos(); 
         oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Seleccione Cliente"); 
@@ -68,6 +70,7 @@ public class Rpt005 extends javax.swing.JDialog {
         jComboBoxSubSections.setVisible(true);
         this.jTable3.setDefaultRenderer (Object.class, new RenderComposicion());
         
+        cargarWellDescExt();
     }
     
     public final void setearTimer() {
@@ -79,7 +82,7 @@ public class Rpt005 extends javax.swing.JDialog {
                 jTable1.setModel(modelTable1);                
             }
             boolean ok=true;
-            if (campoId<=0 || clienteId<=0 || macollaId<=0) ok=false;
+            if (campoId<=0 || clienteId<=0 || (macollaId<=0 && macollaId!=valorNulo)) ok=false;
             jButtonProcesar.setEnabled(ok);
             jButtonExportar.setEnabled(false);
             if (procesado) jButtonExportar.setEnabled(true);
@@ -123,11 +126,18 @@ public class Rpt005 extends javax.swing.JDialog {
         "WHERE (((CampoCliente.campoId)="+campoId+") AND ((Well.macollaId)="+macollaId+") AND ((SurveyPerMD.md)>=[profundidadInicial] And (SurveyPerMD.md)<=[profundidadFinal]))\n" +
         "ORDER BY Well.macollaId, Well.id, SurveyPerMD.tvd;";
         
+        if (macollaId==valorNulo) { //Se escogieron Todas las macollas del campo
+            s="SELECT CampoCliente.campoId, Well.macollaId, Well.id AS wellId, Well.nombre as wellNombre, Run.Id, Survey.id, SurveyPerMD.md, SurveyPerMD.tvd, SurveyPerMD.dls, BHA.tipoDT, DrillingSubSectionType.description\n" +
+            "FROM (BHA INNER JOIN (RunSubSection INNER JOIN ((Macolla INNER JOIN (SurveyPerMD INNER JOIN (Survey INNER JOIN (Run INNER JOIN (Sections INNER JOIN Well ON Sections.wellId = Well.id) ON Run.sectionId = Sections.id) ON Survey.runId = Run.Id) ON SurveyPerMD.surveyId = Survey.id) ON Macolla.id = Well.macollaId) INNER JOIN CampoCliente ON Macolla.campoClienteId = CampoCliente.id) ON RunSubSection.runID = Run.Id) ON BHA.runId = Run.Id) INNER JOIN DrillingSubSectionType ON RunSubSection.drillingSubSectionId = DrillingSubSectionType.id\n" +
+            "WHERE (((CampoCliente.campoId)="+campoId+") AND ((SurveyPerMD.md)>=[profundidadInicial] And (SurveyPerMD.md)<=[profundidadFinal]))\n" +
+            "ORDER BY Well.macollaId, Well.id, SurveyPerMD.tvd;";
+        }
+        
         rs=oBD.select(s);
         try {
             while (rs.next()){
-                if (listOfColumnas.contains(rs.getString("wellNombre"))==false) {
-                    listOfColumnas.add(rs.getString("wellNombre"));
+                if (listOfColumnas.contains(getWellDescExtByNombre(rs.getString("wellNombre")))==false) {
+                    listOfColumnas.add(getWellDescExtByNombre(rs.getString("wellNombre")));
                 }
                 if (rs.getDouble("tvd")>maxTVD) maxTVD=rs.getDouble("tvd");
             }
@@ -179,7 +189,7 @@ public class Rpt005 extends javax.swing.JDialog {
                         break;
                     }
                 }
-                col=listOfColumnas.indexOf(wellNombre);
+                col=listOfColumnas.indexOf(getWellDescExtByNombre(rs.getString("wellNombre")));
                 resultado[row][col].sumaDLS(dls);
                 resultado[row][col].sumaPorcentajeSliding(porcentajeSliding);
                 promedio[row].suma(dls,porcentajeSliding, description);
@@ -190,7 +200,7 @@ public class Rpt005 extends javax.swing.JDialog {
         }
         //Ya con los resultados parciales calculo el dls al 100% y lo plasmo en pantalla
         //Recorro primero por columnas (Pozos) y las agrego al modelo
-        modelTable1.addColumn("TVD");
+        modelTable1.addColumn("<html>Reservoir<br>Azim<br>TVD");
         for (String pozo : listOfColumnas) {
             modelTable1.addColumn(pozo);
         }
@@ -246,11 +256,18 @@ public class Rpt005 extends javax.swing.JDialog {
         "WHERE (((CampoCliente.campoId)="+campoId+") AND ((Well.macollaId)="+macollaId+") AND ((SurveyPerMD.md)>=[profundidadInicial] And (SurveyPerMD.md)<=[profundidadFinal]))\n" +
         "ORDER BY Well.macollaId, Well.id, SurveyPerMD.tvd;";
         
+        if (macollaId==valorNulo){ //se escogieron todas las macollas del campo
+            s="SELECT CampoCliente.campoId, Well.macollaId, Well.id AS wellId, Well.nombre as wellNombre, Run.Id, Survey.id, SurveyPerMD.md, SurveyPerMD.tvd, SurveyPerMD.dls, BHA.tipoDT, DrillingSubSectionType.description\n" +
+            "FROM (BHA INNER JOIN (RunSubSection INNER JOIN ((Macolla INNER JOIN (SurveyPerMD INNER JOIN (Survey INNER JOIN (Run INNER JOIN (Sections INNER JOIN Well ON Sections.wellId = Well.id) ON Run.sectionId = Sections.id) ON Survey.runId = Run.Id) ON SurveyPerMD.surveyId = Survey.id) ON Macolla.id = Well.macollaId) INNER JOIN CampoCliente ON Macolla.campoClienteId = CampoCliente.id) ON RunSubSection.runID = Run.Id) ON BHA.runId = Run.Id) INNER JOIN DrillingSubSectionType ON RunSubSection.drillingSubSectionId = DrillingSubSectionType.id\n" +
+            "WHERE (((CampoCliente.campoId)="+campoId+") AND ((SurveyPerMD.md)>=[profundidadInicial] And (SurveyPerMD.md)<=[profundidadFinal]))\n" +
+            "ORDER BY Well.macollaId, Well.id, SurveyPerMD.tvd;";            
+        }
+        
         rs=oBD.select(s);
         try {
             while (rs.next()){
-                if (listOfColumnas.contains(rs.getString("wellNombre"))==false) {
-                    listOfColumnas.add(rs.getString("wellNombre"));
+                if (listOfColumnas.contains(getWellDescExtByNombre(rs.getString("wellNombre")))==false) {
+                    listOfColumnas.add(getWellDescExtByNombre(rs.getString("wellNombre")));
                 }
                 if (rs.getDouble("tvd")>maxTVD) maxTVD=rs.getDouble("tvd");
             }
@@ -293,7 +310,7 @@ public class Rpt005 extends javax.swing.JDialog {
                         break;
                     }
                 }
-                col=listOfColumnas.indexOf(wellNombre);
+                col=listOfColumnas.indexOf(getWellDescExtByNombre(rs.getString("wellNombre")));
                 resultado[row][col].sumaPorcentajeArena(porcentajeArena);
             }  
             rs.close();
@@ -302,7 +319,7 @@ public class Rpt005 extends javax.swing.JDialog {
         }
         //Ya con los resultados parciales calculo el dls al 100% y lo plasmo en pantalla
         //Recorro primero por columnas (Pozos) y las agrego al modelo
-        modelTable2.addColumn("TVD");
+        modelTable2.addColumn("<html>Reservoir<br>Azim<br>TVD");
         for (String pozo : listOfColumnas) {
             modelTable2.addColumn(pozo);
         }
@@ -386,7 +403,7 @@ public class Rpt005 extends javax.swing.JDialog {
         sheet1 = workbook.createSheet("DLS vs TVD"); 
         rowhead[0] = sheet1.createRow((short) 0);
         for (int j=0;j<=cols-1;j++) {
-            rowhead[0].createCell(j).setCellValue(modelTable1.getColumnName(j));
+            rowhead[0].createCell(j).setCellValue(modelTable1.getColumnName(j).replace("<br>", "/").replace("<html>", ""));
         }        
         for (int i=1;i<=rows-1;i++) {
             row=i;
@@ -497,6 +514,70 @@ public class Rpt005 extends javax.swing.JDialog {
     
     public static double newDouble(String s) {
         return parseDouble(s.replace(",", "."));
+    }
+    
+    private int indexOfWellDescExtByDesc(String wellDescExt) {
+        int r=-1;
+        for (int i=0;i<=aWellDescExt.length-1;i++){
+            if (wellDescExt.equals(aWellDescExt[i].getDescExt())){
+                r=i;
+                break;
+            }
+        }
+        return r;
+    }
+    
+    private int indexOfWellDescExtByNombre(String wellNombre) {
+        int r=-1;
+        for (int i=0;i<=aWellDescExt.length-1;i++){
+            if (wellNombre.equals(aWellDescExt[i].getWellNombre())){
+                r=i;
+                break;
+            }
+        }
+        return r;
+    }
+    
+    private String getWellDescExtByNombre(String wellNombre) {
+         String descExt="";
+         for (int i=0;i<=aWellDescExt.length-1;i++){
+            if (wellNombre.equals(aWellDescExt[i].getWellNombre())){
+                descExt=aWellDescExt[i].getDescExt();
+                break;
+            }
+        }       
+        return descExt;
+    }
+    
+    private void cargarWellDescExt(){
+       ResultSet rs=null;
+       String s="";
+       WellDescExt oWellDescExt=null;
+       int i=0;
+       s="SELECT Run.wellId, Reservoir.nombre as reservoirNombre, Well.nombre as wellNombre, Max(SurveyPerMD.md) AS MáxDemd, Last(SurveyPerMD.azim) AS ÚltimoDeazim\n" +
+         "FROM Reservoir INNER JOIN (((SurveyPerMD INNER JOIN Survey ON SurveyPerMD.surveyId = Survey.id) INNER JOIN Run ON Survey.runId = Run.Id) INNER JOIN Well ON Run.wellId = Well.id) ON Reservoir.Id = Well.reservoirId\n" +
+         "GROUP BY Run.wellId, Reservoir.nombre, Well.nombre;";
+       rs=oBD.select(s);
+        try {
+            while (rs.next()){
+                i++;
+            }
+            aWellDescExt=new WellDescExt[i];
+            rs.beforeFirst();
+            i=0;
+            while (rs.next()){
+                oWellDescExt=new WellDescExt();
+                oWellDescExt.setWellId(rs.getLong("wellId"));
+                oWellDescExt.setReservoir(rs.getString("reservoirNombre"));
+                oWellDescExt.setWellNombre(rs.getString("wellNombre"));
+                oWellDescExt.setAzim(rs.getDouble("ÚltimoDeazim"));
+                aWellDescExt[i]=oWellDescExt;
+                i++;
+            }
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(Rpt005.class.getName()).log(Level.SEVERE, null, ex);
+        }       
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -614,6 +695,7 @@ public class Rpt005 extends javax.swing.JDialog {
 
             }
         ));
+        jTable2.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jScrollPane2.setViewportView(jTable2);
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 400));
@@ -630,6 +712,7 @@ public class Rpt005 extends javax.swing.JDialog {
 
             }
         ));
+        jTable3.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jScrollPane3.setViewportView(jTable3);
 
         jPanel3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 400));
@@ -661,7 +744,9 @@ public class Rpt005 extends javax.swing.JDialog {
     private void jComboBoxCampoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCampoActionPerformed
         campoId=oManejoDeCombos.getComboID(this.jComboBoxCampo);
         String s="SELECT macollaId,macollaNombre from ConsultaMacolla1 WHERE clienteId="+clienteId + " AND campoId="+campoId;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxMacolla,"Seleccione Macolla");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxMacolla,"Seleccione Macolla o (Todas)");
+        oManejoDeCombos.ingresarAlComboBox("Todas", jComboBoxMacolla);
+        oManejoDeCombos.setCombo(0, jComboBoxMacolla);
         procesado=false;
     }//GEN-LAST:event_jComboBoxCampoActionPerformed
 
@@ -675,6 +760,9 @@ public class Rpt005 extends javax.swing.JDialog {
 
     private void jComboBoxMacollaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxMacollaActionPerformed
         macollaId=oManejoDeCombos.getComboID(this.jComboBoxMacolla);
+        if ("Todas".equals(this.jComboBoxMacolla.getSelectedItem().toString())){
+            macollaId=valorNulo;
+        }
         procesado=false;
     }//GEN-LAST:event_jComboBoxMacollaActionPerformed
 
@@ -946,5 +1034,90 @@ class RenderComposicion extends DefaultTableCellRenderer
         }           
       return this;
    }
+}
+
+class WellDescExt{
+    private Long wellId;
+    private String reservoir;
+    private String wellNombre;
+    private Double azim;
+    private final static String CRLF="\r\n";
+    
+    public String getDescExt(){
+        String s="<html>";
+        s+=reservoir+"<br>";
+        s+=na(azim)+"<br>";
+        s+=wellNombre;
+        return s;
+    }
+
+    /**
+     * @return the wellId
+     */
+    public Long getWellId() {
+        return wellId;
+    }
+
+    /**
+     * @param wellId the wellId to set
+     */
+    public void setWellId(Long wellId) {
+        this.wellId = wellId;
+    }
+
+    /**
+     * @return the Reservoir
+     */
+    public String getReservoir() {
+        return reservoir;
+    }
+
+    /**
+     * @param Reservoir the Reservoir to set
+     */
+    public void setReservoir(String reservoir) {
+        this.reservoir = reservoir;
+    }
+
+    /**
+     * @return the wellNombre
+     */
+    public String getWellNombre() {
+        return wellNombre;
+    }
+
+    /**
+     * @param wellNombre the wellNombre to set
+     */
+    public void setWellNombre(String wellNombre) {
+        this.wellNombre = wellNombre;
+    }
+
+    /**
+     * @return the maxMD
+     */
+    public Double getAzim() {
+        return azim;
+    }
+
+    /**
+     * @param maxMD the maxMD to set
+     */
+    public void setAzim(Double azim) {
+        this.azim = azim;
+    }
+    
+    private Object na(Object o) {
+        DecimalFormat df = new DecimalFormat("##########0.000");
+        if (o.toString().contains(""+valorNulo)) {
+            return valorNuloMuestra;
+        } else {
+            try {
+            return df.format(o).replace(',', '.');
+            } catch (IllegalArgumentException ex) {
+                return o;
+            }
+        }
+    }
 }
 
