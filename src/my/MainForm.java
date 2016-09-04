@@ -310,12 +310,15 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel9 = new javax.swing.JLabel();
         jLabelReporte002 = new javax.swing.JLabel();
         jLabelReporte001 = new javax.swing.JLabel();
         jLabelReporte003 = new javax.swing.JLabel();
         jLabelReporte004 = new javax.swing.JLabel();
         jLabelReporte005 = new javax.swing.JLabel();
+        jRadioButtonDirectionalDrillers = new javax.swing.JRadioButton();
+        jRadioButtonDrillinglEngineers = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
         jLabel1 = new javax.swing.JLabel();
@@ -338,12 +341,13 @@ public class MainForm extends javax.swing.JFrame {
         jLabelReporte002.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabelReporte002.setText("Well Planning Offset Data");
         jLabelReporte002.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelReporte002.setEnabled(false);
         jLabelReporte002.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jLabelReporte002FocusGained(evt);
-            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jLabelReporte002FocusLost(evt);
+            }
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jLabelReporte002FocusGained(evt);
             }
         });
         jLabelReporte002.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -357,17 +361,18 @@ public class MainForm extends javax.swing.JFrame {
                 jLabelReporte002MouseExited(evt);
             }
         });
-        getContentPane().add(jLabelReporte002, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 190, 250, 20));
+        getContentPane().add(jLabelReporte002, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 190, 250, 20));
 
         jLabelReporte001.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabelReporte001.setText("Well Excecution Data");
         jLabelReporte001.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelReporte001.setEnabled(false);
         jLabelReporte001.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jLabelReporte001FocusGained(evt);
-            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jLabelReporte001FocusLost(evt);
+            }
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jLabelReporte001FocusGained(evt);
             }
         });
         jLabelReporte001.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -381,17 +386,18 @@ public class MainForm extends javax.swing.JFrame {
                 jLabelReporte001MouseExited(evt);
             }
         });
-        getContentPane().add(jLabelReporte001, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 150, 200, 20));
+        getContentPane().add(jLabelReporte001, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 150, 200, 20));
 
         jLabelReporte003.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabelReporte003.setText("Well Summary");
         jLabelReporte003.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelReporte003.setEnabled(false);
         jLabelReporte003.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jLabelReporte003FocusGained(evt);
-            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jLabelReporte003FocusLost(evt);
+            }
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jLabelReporte003FocusGained(evt);
             }
         });
         jLabelReporte003.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -405,17 +411,18 @@ public class MainForm extends javax.swing.JFrame {
                 jLabelReporte003MouseExited(evt);
             }
         });
-        getContentPane().add(jLabelReporte003, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 230, 200, 20));
+        getContentPane().add(jLabelReporte003, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 230, 200, 20));
 
         jLabelReporte004.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabelReporte004.setText("Well Planning risk analysis");
         jLabelReporte004.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelReporte004.setEnabled(false);
         jLabelReporte004.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jLabelReporte004FocusGained(evt);
-            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jLabelReporte004FocusLost(evt);
+            }
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jLabelReporte004FocusGained(evt);
             }
         });
         jLabelReporte004.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -429,17 +436,18 @@ public class MainForm extends javax.swing.JFrame {
                 jLabelReporte004MouseExited(evt);
             }
         });
-        getContentPane().add(jLabelReporte004, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, 250, 20));
+        getContentPane().add(jLabelReporte004, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 270, 250, 20));
 
         jLabelReporte005.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabelReporte005.setText("Field Summary Report");
         jLabelReporte005.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelReporte005.setEnabled(false);
         jLabelReporte005.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jLabelReporte005FocusGained(evt);
-            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jLabelReporte005FocusLost(evt);
+            }
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jLabelReporte005FocusGained(evt);
             }
         });
         jLabelReporte005.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -453,7 +461,31 @@ public class MainForm extends javax.swing.JFrame {
                 jLabelReporte005MouseExited(evt);
             }
         });
-        getContentPane().add(jLabelReporte005, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 310, 250, 20));
+        getContentPane().add(jLabelReporte005, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 310, 250, 20));
+
+        jRadioButtonDirectionalDrillers.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(jRadioButtonDirectionalDrillers);
+        jRadioButtonDirectionalDrillers.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jRadioButtonDirectionalDrillers.setForeground(new java.awt.Color(0, 0, 255));
+        jRadioButtonDirectionalDrillers.setText("Directional Drillers");
+        jRadioButtonDirectionalDrillers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonDirectionalDrillersActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jRadioButtonDirectionalDrillers, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 90, 170, 30));
+
+        jRadioButtonDrillinglEngineers.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(jRadioButtonDrillinglEngineers);
+        jRadioButtonDrillinglEngineers.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jRadioButtonDrillinglEngineers.setForeground(new java.awt.Color(0, 0, 255));
+        jRadioButtonDrillinglEngineers.setText("Drilling Engineers ");
+        jRadioButtonDrillinglEngineers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonDrillinglEngineersActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jRadioButtonDrillinglEngineers, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 90, 170, 30));
 
         jTextPane1.setEditable(false);
         jTextPane1.setBackground(new java.awt.Color(204, 204, 204));
@@ -575,6 +607,22 @@ public class MainForm extends javax.swing.JFrame {
         jLabelReporte005.setForeground(Color.BLACK);
     }//GEN-LAST:event_jLabelReporte005MouseExited
 
+    private void jRadioButtonDrillinglEngineersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonDrillinglEngineersActionPerformed
+        this.jLabelReporte001.setEnabled(false);
+        this.jLabelReporte002.setEnabled(false);
+        this.jLabelReporte003.setEnabled(true);
+        this.jLabelReporte004.setEnabled(true);
+        this.jLabelReporte005.setEnabled(true);
+    }//GEN-LAST:event_jRadioButtonDrillinglEngineersActionPerformed
+
+    private void jRadioButtonDirectionalDrillersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonDirectionalDrillersActionPerformed
+        this.jLabelReporte001.setEnabled(true);
+        this.jLabelReporte002.setEnabled(true);
+        this.jLabelReporte003.setEnabled(false);
+        this.jLabelReporte004.setEnabled(false);
+        this.jLabelReporte005.setEnabled(false);
+    }//GEN-LAST:event_jRadioButtonDirectionalDrillersActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -612,6 +660,7 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelReporte001;
@@ -619,6 +668,8 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelReporte003;
     private javax.swing.JLabel jLabelReporte004;
     private javax.swing.JLabel jLabelReporte005;
+    private javax.swing.JRadioButton jRadioButtonDirectionalDrillers;
+    private javax.swing.JRadioButton jRadioButtonDrillinglEngineers;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables

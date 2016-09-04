@@ -52,6 +52,8 @@ public class Rpt001 extends javax.swing.JDialog {
     public double factorDesde, factorHasta;
     public double tvdDesde=0.0, tvdHasta=0.0;
     public long clienteId=0,campoId=0, macollaId=0,sectionSubTypeId=0;
+    public long diameterId=0;
+    public String tipoDT="";
     public Long[] aCorridas;
     public int cantCorridas;
     public Numeros oNumeros=new Numeros();
@@ -69,7 +71,9 @@ public class Rpt001 extends javax.swing.JDialog {
         initComponents();
         oManejoDeCombos = new ManejoDeCombos();
         oBD=o;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),DrillingSubSectionType.class,this.jComboBoxDrillingSubType,"Seleccione SubSectionType");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),DrillingSubSectionType.class,this.jComboBoxDrillingSubType,"Select Sub-Section Type");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Diameters.class,this.jComboBoxDiameter,"Select Hole Size [All]"); 
+        oManejoDeCombos.setCombo(0, this.jComboBoxDiameter);
         seteosIniciales(); 
         modeloCorridas=(DefaultTableModel) this.jTableCorridas.getModel();
         modeloSlideSheet=(DefaultTableModel) this.jTableSlideSheet.getModel();
@@ -196,9 +200,16 @@ public class Rpt001 extends javax.swing.JDialog {
         if (this.jRadioButtonTr.isSelected()) {
            key="Tr" ;
         }
-        s="SELECT DISTINCT clientesNombre, campoNombre, macollaNombre, wellNombre, sectionsNumeroIdentificador, runNumero, runId, md, tvd ";
-        s+="FROM ConsultaCorridasPorCriteria1 WHERE "+key+" >=" + this.factorDesde + " AND "+key+"<=" + this.factorHasta ;
+        
+//        s="SELECT DISTINCT clientesNombre, campoNombre, macollaNombre, wellNombre, sectionsNumeroIdentificador, runNumero, runId, md, tvd ";
+//        s+="FROM ConsultaCorridasPorCriteria1 WHERE "+key+" >=" + this.factorDesde + " AND "+key+"<=" + this.factorHasta ;
+//        s+=" AND clientesId="+clienteId + " AND drillingSubSectionId=" + this.sectionSubTypeId;
+        
+        s="SELECT DISTINCT ConsultaCorridasPorCriteria1.clientesNombre, ConsultaCorridasPorCriteria1.campoNombre, ConsultaCorridasPorCriteria1.macollaNombre, ConsultaCorridasPorCriteria1.wellNombre, ConsultaCorridasPorCriteria1.sectionsNumeroIdentificador, ConsultaCorridasPorCriteria1.runNumero, ConsultaCorridasPorCriteria1.runId, ConsultaCorridasPorCriteria1.md, ConsultaCorridasPorCriteria1.tvd, Sections.diameterId, BHA.tipoDT\n" +
+            "FROM (ConsultaCorridasPorCriteria1 INNER JOIN Sections ON ConsultaCorridasPorCriteria1.sectionsId = Sections.id) INNER JOIN BHA ON ConsultaCorridasPorCriteria1.runID = BHA.runId\n" +
+            "WHERE "+key+" >=" + this.factorDesde + " AND "+key+"<=" + this.factorHasta ;
         s+=" AND clientesId="+clienteId + " AND drillingSubSectionId=" + this.sectionSubTypeId;
+        
         if (key=="Tr") {
            switch (this.jComboBoxInclinacion.getSelectedIndex()) {
                case 0:
@@ -220,7 +231,17 @@ public class Rpt001 extends javax.swing.JDialog {
         }
         if (macollaId>0) {
             s+=" AND macollaId="+macollaId;    
-        }        
+        }
+        
+        if (diameterId>0) {
+           s+=" AND diameterId="+diameterId; 
+        }
+ 
+        if (! "".equals(tipoDT)) {
+           s+=" AND tipoDT='"+tipoDT+"'"; 
+        }
+        
+        
         s+=";";       
         rs=oBD.select(s);
         try {
@@ -699,7 +720,7 @@ public class Rpt001 extends javax.swing.JDialog {
             this.jComboBoxCampo.setEnabled(true);
             this.jComboBoxMacolla.setEnabled(true);            
         }
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Seleccione Cliente"); 
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Select Client"); 
         limpiarTablaCorridas();
     }
     
@@ -770,7 +791,7 @@ public class Rpt001 extends javax.swing.JDialog {
             if (rs.next()){
                 lat1=rs.getDouble("locationLat");
                 long1=rs.getDouble("locationLong");
-                origen="Origen field: "+rs.getString("nombre")+", Lat:"+na(lat1)+", Long:"+na(long1);
+                origen="Origin field: "+rs.getString("nombre")+", Location grid N (m):"+na(lat1)+", Location grid E (m):"+na(long1);
             }} catch (SQLException ex) {
             Logger.getLogger(Rpt001.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -778,7 +799,7 @@ public class Rpt001 extends javax.swing.JDialog {
             d=Math.sqrt(Math.pow((long2-long1),2)+Math.pow((lat2-lat1),2));
         }
         this.jLabelOrigen.setText(origen);
-        this.jLabelDistancia.setText("Distancia: "+na(d));
+        this.jLabelDistancia.setText("Distance (m): "+na(d));
     }
 
 
@@ -793,6 +814,7 @@ public class Rpt001 extends javax.swing.JDialog {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jRadioButtonCliente = new javax.swing.JRadioButton();
@@ -811,6 +833,10 @@ public class Rpt001 extends javax.swing.JDialog {
         jRadioButtonBr = new javax.swing.JRadioButton();
         jRadioButtonTr = new javax.swing.JRadioButton();
         jComboBoxInclinacion = new javax.swing.JComboBox();
+        jComboBoxDiameter = new javax.swing.JComboBox();
+        jRadioButtonMotor = new javax.swing.JRadioButton();
+        jRadioButtonRSS = new javax.swing.JRadioButton();
+        jRadioButtonMotorAndRSS = new javax.swing.JRadioButton();
         jScrollPaneCorridas = new javax.swing.JScrollPane();
         jTableCorridas = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
@@ -842,6 +868,7 @@ public class Rpt001 extends javax.swing.JDialog {
         jLabelLongitud = new javax.swing.JLabel();
         jLabelDistancia = new javax.swing.JLabel();
         jLabelOrigen = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setTitle("Well Excecution Data");
         setMinimumSize(new java.awt.Dimension(1200, 600));
@@ -852,11 +879,11 @@ public class Rpt001 extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setText("Criteria de seleccion:");
+        jLabel1.setText("Selection criteria:");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
         buttonGroup1.add(jRadioButtonCliente);
-        jRadioButtonCliente.setText("Cliente");
+        jRadioButtonCliente.setText("Client");
         jRadioButtonCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonClienteActionPerformed(evt);
@@ -865,7 +892,7 @@ public class Rpt001 extends javax.swing.JDialog {
         jPanel1.add(jRadioButtonCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
         buttonGroup1.add(jRadioButtonCampo);
-        jRadioButtonCampo.setText("Campo");
+        jRadioButtonCampo.setText("Field");
         jRadioButtonCampo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonCampoActionPerformed(evt);
@@ -874,7 +901,7 @@ public class Rpt001 extends javax.swing.JDialog {
         jPanel1.add(jRadioButtonCampo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
 
         buttonGroup1.add(jRadioButtonMacolla);
-        jRadioButtonMacolla.setText("Macolla");
+        jRadioButtonMacolla.setText("Pad/Structure");
         jRadioButtonMacolla.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonMacollaActionPerformed(evt);
@@ -888,7 +915,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jComboBoxClientesActionPerformed(evt);
             }
         });
-        jPanel1.add(jComboBoxClientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 10, 230, -1));
+        jPanel1.add(jComboBoxClientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, 230, -1));
 
         jComboBoxCampo.setEnabled(false);
         jComboBoxCampo.addActionListener(new java.awt.event.ActionListener() {
@@ -896,7 +923,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jComboBoxCampoActionPerformed(evt);
             }
         });
-        jPanel1.add(jComboBoxCampo, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 40, 230, -1));
+        jPanel1.add(jComboBoxCampo, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 40, 230, -1));
 
         jComboBoxMacolla.setEnabled(false);
         jComboBoxMacolla.addActionListener(new java.awt.event.ActionListener() {
@@ -904,14 +931,14 @@ public class Rpt001 extends javax.swing.JDialog {
                 jComboBoxMacollaActionPerformed(evt);
             }
         });
-        jPanel1.add(jComboBoxMacolla, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 70, 230, -1));
+        jPanel1.add(jComboBoxMacolla, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 70, 230, -1));
 
         jComboBoxDrillingSubType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxDrillingSubTypeActionPerformed(evt);
             }
         });
-        jPanel1.add(jComboBoxDrillingSubType, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 10, 190, -1));
+        jPanel1.add(jComboBoxDrillingSubType, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 10, 190, -1));
 
         jTextFieldDlsDesde.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jTextFieldDlsDesde.addActionListener(new java.awt.event.ActionListener() {
@@ -924,7 +951,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jTextFieldDlsDesdeKeyTyped(evt);
             }
         });
-        jPanel1.add(jTextFieldDlsDesde, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 60, 50, -1));
+        jPanel1.add(jTextFieldDlsDesde, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 60, 50, -1));
 
         jTextFieldDlsHasta.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jTextFieldDlsHasta.addActionListener(new java.awt.event.ActionListener() {
@@ -937,55 +964,91 @@ public class Rpt001 extends javax.swing.JDialog {
                 jTextFieldDlsHastaKeyTyped(evt);
             }
         });
-        jPanel1.add(jTextFieldDlsHasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 60, 50, -1));
+        jPanel1.add(jTextFieldDlsHasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 60, 50, -1));
 
-        jLabel2.setText("Hasta:");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 40, -1, -1));
+        jLabel2.setText("To:");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 40, -1, -1));
 
-        jLabel3.setText("Desde:");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 40, -1, -1));
+        jLabel3.setText("From:");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 40, -1, -1));
 
-        jButtonBuscarCorridas.setText("Buscar Corridas");
+        jButtonBuscarCorridas.setText("Search for runs");
         jButtonBuscarCorridas.setEnabled(false);
         jButtonBuscarCorridas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonBuscarCorridasActionPerformed(evt);
             }
         });
-        jPanel1.add(jButtonBuscarCorridas, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 60, -1, -1));
+        jPanel1.add(jButtonBuscarCorridas, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 60, -1, -1));
 
         buttonGroup2.add(jRadioButtonDls);
         jRadioButtonDls.setSelected(true);
-        jRadioButtonDls.setText("dls");
+        jRadioButtonDls.setText("DLS (°/100ft)");
         jRadioButtonDls.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonDlsActionPerformed(evt);
             }
         });
-        jPanel1.add(jRadioButtonDls, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 10, -1, -1));
+        jPanel1.add(jRadioButtonDls, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 10, -1, -1));
 
         buttonGroup2.add(jRadioButtonBr);
-        jRadioButtonBr.setText("Br");
+        jRadioButtonBr.setText("BR");
+        jRadioButtonBr.setActionCommand("BR");
         jRadioButtonBr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonBrActionPerformed(evt);
             }
         });
-        jPanel1.add(jRadioButtonBr, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 10, -1, -1));
+        jPanel1.add(jRadioButtonBr, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 10, -1, -1));
 
         buttonGroup2.add(jRadioButtonTr);
-        jRadioButtonTr.setText("Tr");
-        jPanel1.add(jRadioButtonTr, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 10, -1, -1));
+        jRadioButtonTr.setText("TR");
+        jPanel1.add(jRadioButtonTr, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 10, -1, -1));
 
-        jComboBoxInclinacion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "inclinacion( 0 -29)", "inclinacion (30 - 59)", "inclinacion (60 - 74)", "inclinacion (75 100)" }));
+        jComboBoxInclinacion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "inclination( 0 -29)", "inclination (30 - 59)", "inclination (60 - 74)", "inclination (75 100)" }));
         jComboBoxInclinacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxInclinacionActionPerformed(evt);
             }
         });
-        jPanel1.add(jComboBoxInclinacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 10, 150, -1));
+        jPanel1.add(jComboBoxInclinacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 10, 170, -1));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, 940, 100));
+        jComboBoxDiameter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxDiameterActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jComboBoxDiameter, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 60, 210, -1));
+
+        buttonGroup3.add(jRadioButtonMotor);
+        jRadioButtonMotor.setText("Motor");
+        jRadioButtonMotor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonMotorActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jRadioButtonMotor, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 10, -1, -1));
+
+        buttonGroup3.add(jRadioButtonRSS);
+        jRadioButtonRSS.setText("RSS");
+        jRadioButtonRSS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonRSSActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jRadioButtonRSS, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 30, 50, -1));
+
+        buttonGroup3.add(jRadioButtonMotorAndRSS);
+        jRadioButtonMotorAndRSS.setSelected(true);
+        jRadioButtonMotorAndRSS.setText("Motor & RSS");
+        jRadioButtonMotorAndRSS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonMotorAndRSSActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jRadioButtonMotorAndRSS, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 50, -1, -1));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, 1100, 100));
 
         jTableCorridas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1491,7 +1554,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Campo", "Macolla", "Pozo", "Seccion", "Corrida", "md", "tvd"
+                "Field", "Pad", "Well", "Section", "Run", "MD (ft)", "TVD (ft)"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1520,7 +1583,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "md", "incl", "azim", "tvd", "vsec", "ns", "ew", "dls", "tr", "br"
+                "MD (ft) ", "INCL (Deg)", "AZIM (Deg)", "TVD ( ft)", "VSEC (ft)", " NS (ft)", "EW (ft)", " DLS (°/100ft)", " TR (°/100ft)", " BUR (°/100ft)"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1545,7 +1608,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "md", "incl", "azim", "tvd", "vsec", "ns", "ew", "dls", "tr", "br"
+                "MD (ft)", "INCL (Deg)", "AZIM (Deg)", "TVD ( ft)", "VSEC (ft)", "NS (ft)", "EW (ft)", "DLS (°/100ft)", "TR (°/100ft)", "BUR (°/100ft)"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1768,7 +1831,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "fecha", "start time", "end time", "md from", "md to", "delta md", "operation mode", "tf mode", "tf angle", "flow", "spf off bott", "spf on bott", "differential", "wob", "srpm", "torque", "offBottTorque", "desired Power Setting"
+                "Date", "Start Time", "End Time", "MD from (ft)", " MD to (ft)", "Course (ft)", "Operation Mode", "TF Mode", "TF Angle (deg)", "Flow (gal/min)", "SPP Off Bott (psi) ", "SPP Off Bott (psi) ", "Differential (psi)", "WOB (1000 lbf)", "SRPM (c/min)", "Torque (1000 ft.lbf)", "Off Bot Torque (1000 ft.lbf)", "Desired Power Setting"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1989,7 +2052,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 {null, null, null}
             },
             new String [] {
-                "dept", "gr", "p40hunc"
+                "MD (ft)", "GR (GAPI)", "Resistivity OHM.M"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -2016,7 +2079,7 @@ public class Rpt001 extends javax.swing.JDialog {
         getContentPane().add(jSplitPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 420, -1, -1));
 
         jLabelGrafica.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabelGrafica.setText("graficar");
+        jLabelGrafica.setText("Plot");
         jLabelGrafica.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelGrafica.setEnabled(false);
         jLabelGrafica.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -2040,14 +2103,14 @@ public class Rpt001 extends javax.swing.JDialog {
         });
         getContentPane().add(jLabelGrafica, new org.netbeans.lib.awtextra.AbsoluteConstraints(1130, 300, 50, 20));
 
-        jLabelPorcentajeArena.setText("% Arena:");
+        jLabelPorcentajeArena.setText("% Sand:");
         getContentPane().add(jLabelPorcentajeArena, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 310, -1, -1));
 
         jLabelType.setText("          ");
         getContentPane().add(jLabelType, new org.netbeans.lib.awtextra.AbsoluteConstraints(970, 310, 150, -1));
 
         jLabelMostrarBHA.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabelMostrarBHA.setText("Corridas (Mostrar BHA)");
+        jLabelMostrarBHA.setText(" Runs (Show BHA)");
         jLabelMostrarBHA.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelMostrarBHA.setEnabled(false);
         jLabelMostrarBHA.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -2061,7 +2124,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jLabelMostrarBHAMouseExited(evt);
             }
         });
-        getContentPane().add(jLabelMostrarBHA, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 120, 150, -1));
+        getContentPane().add(jLabelMostrarBHA, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 120, 20));
 
         jTextFieldTVDHasta.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jTextFieldTVDHasta.setEnabled(false);
@@ -2075,10 +2138,10 @@ public class Rpt001 extends javax.swing.JDialog {
                 jTextFieldTVDHastaKeyTyped(evt);
             }
         });
-        getContentPane().add(jTextFieldTVDHasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 120, 60, -1));
+        getContentPane().add(jTextFieldTVDHasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 120, 50, -1));
 
-        jLabel6.setText("Rango TVD:");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 120, -1, -1));
+        jLabel6.setText("TVD To (ft):");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, 60, 20));
 
         jTextFieldTVDDesde.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jTextFieldTVDDesde.setEnabled(false);
@@ -2092,7 +2155,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jTextFieldTVDDesdeKeyTyped(evt);
             }
         });
-        getContentPane().add(jTextFieldTVDDesde, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, 60, -1));
+        getContentPane().add(jTextFieldTVDDesde, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 120, 50, -1));
 
         jButtonFiltrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/my/filter.png"))); // NOI18N
         jButtonFiltrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -2124,7 +2187,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jTextFieldLongitudKeyTyped(evt);
             }
         });
-        getContentPane().add(jTextFieldLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 530, 90, -1));
+        getContentPane().add(jTextFieldLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 530, 70, -1));
 
         jTextFieldLatitud.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jTextFieldLatitud.addActionListener(new java.awt.event.ActionListener() {
@@ -2137,10 +2200,10 @@ public class Rpt001 extends javax.swing.JDialog {
                 jTextFieldLatitudKeyTyped(evt);
             }
         });
-        getContentPane().add(jTextFieldLatitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 530, 90, -1));
+        getContentPane().add(jTextFieldLatitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 530, 70, -1));
 
-        jLabelLatitud.setText("Latitud:");
-        getContentPane().add(jLabelLatitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 530, -1, -1));
+        jLabelLatitud.setText("Location grid N (m):");
+        getContentPane().add(jLabelLatitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 530, -1, -1));
 
         jButtonCalcular.setText("Calc");
         jButtonCalcular.setEnabled(false);
@@ -2149,18 +2212,21 @@ public class Rpt001 extends javax.swing.JDialog {
                 jButtonCalcularActionPerformed(evt);
             }
         });
-        getContentPane().add(jButtonCalcular, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 530, 60, -1));
+        getContentPane().add(jButtonCalcular, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 530, -1, -1));
 
-        jLabelLongitud.setText("Longitud:");
-        getContentPane().add(jLabelLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 530, -1, -1));
+        jLabelLongitud.setText("Location grid E (m):");
+        getContentPane().add(jLabelLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 530, -1, -1));
 
         jLabelDistancia.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabelDistancia.setText("Distancia:");
-        getContentPane().add(jLabelDistancia, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 530, 190, -1));
+        jLabelDistancia.setText(" Distance (m):");
+        getContentPane().add(jLabelDistancia, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 530, 180, -1));
 
         jLabelOrigen.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabelOrigen.setText("Origen:");
-        getContentPane().add(jLabelOrigen, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 490, -1, -1));
+        jLabelOrigen.setText("Origin:");
+        getContentPane().add(jLabelOrigen, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 490, 660, -1));
+
+        jLabel7.setText("TVD From (ft):");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 120, 80, 20));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -2181,7 +2247,7 @@ public class Rpt001 extends javax.swing.JDialog {
         limpiarTablaCorridas();
         clienteId=oManejoDeCombos.getComboID(this.jComboBoxClientes);
         String s="SELECT campoId,campoNombre from ConsultaCampoCliente1 WHERE clienteId="+clienteId;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Seleccione Campo");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Select Field");
     }//GEN-LAST:event_jComboBoxClientesActionPerformed
 
     private void jComboBoxCampoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCampoActionPerformed
@@ -2189,7 +2255,7 @@ public class Rpt001 extends javax.swing.JDialog {
         clienteId=oManejoDeCombos.getComboID(this.jComboBoxClientes);
         campoId=oManejoDeCombos.getComboID(this.jComboBoxCampo);
         String s="SELECT macollaId,macollaNombre from ConsultaMacolla1 WHERE clienteId="+clienteId + " AND campoId="+campoId;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxMacolla,"Seleccione Macolla");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxMacolla,"Select Pad/Structure");
     }//GEN-LAST:event_jComboBoxCampoActionPerformed
 
     private void jComboBoxMacollaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxMacollaActionPerformed
@@ -2324,6 +2390,22 @@ public class Rpt001 extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_jToggleButtonDistanceActionPerformed
 
+    private void jComboBoxDiameterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxDiameterActionPerformed
+        diameterId=oManejoDeCombos.getComboID(this.jComboBoxDiameter);
+    }//GEN-LAST:event_jComboBoxDiameterActionPerformed
+
+    private void jRadioButtonMotorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMotorActionPerformed
+        tipoDT="MOTOR";
+    }//GEN-LAST:event_jRadioButtonMotorActionPerformed
+
+    private void jRadioButtonRSSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonRSSActionPerformed
+        tipoDT="RSS";
+    }//GEN-LAST:event_jRadioButtonRSSActionPerformed
+
+    private void jRadioButtonMotorAndRSSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMotorAndRSSActionPerformed
+        tipoDT="";
+    }//GEN-LAST:event_jRadioButtonMotorAndRSSActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2370,11 +2452,13 @@ public class Rpt001 extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
     public javax.swing.JButton jButtonBuscarCorridas;
     private javax.swing.JButton jButtonCalcular;
     private javax.swing.JButton jButtonFiltrar;
     private javax.swing.JComboBox jComboBoxCampo;
     private javax.swing.JComboBox jComboBoxClientes;
+    private javax.swing.JComboBox jComboBoxDiameter;
     private javax.swing.JComboBox jComboBoxDrillingSubType;
     private javax.swing.JComboBox jComboBoxInclinacion;
     private javax.swing.JComboBox jComboBoxMacolla;
@@ -2384,6 +2468,7 @@ public class Rpt001 extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelDistancia;
     private javax.swing.JLabel jLabelGrafica;
@@ -2400,6 +2485,9 @@ public class Rpt001 extends javax.swing.JDialog {
     private javax.swing.JRadioButton jRadioButtonCliente;
     private javax.swing.JRadioButton jRadioButtonDls;
     private javax.swing.JRadioButton jRadioButtonMacolla;
+    private javax.swing.JRadioButton jRadioButtonMotor;
+    private javax.swing.JRadioButton jRadioButtonMotorAndRSS;
+    private javax.swing.JRadioButton jRadioButtonRSS;
     private javax.swing.JRadioButton jRadioButtonTr;
     private javax.swing.JScrollPane jScrollPaneCorridas;
     private javax.swing.JScrollPane jScrollPaneLas;

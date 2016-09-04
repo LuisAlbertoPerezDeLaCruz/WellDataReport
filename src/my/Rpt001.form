@@ -6,6 +6,8 @@
     </Component>
     <Component class="javax.swing.ButtonGroup" name="buttonGroup2">
     </Component>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup3">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="title" type="java.lang.String" value="Well Excecution Data"/>
@@ -46,7 +48,7 @@
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="130" y="10" width="940" height="100"/>
+          <AbsoluteConstraints x="70" y="10" width="1100" height="100"/>
         </Constraint>
       </Constraints>
 
@@ -56,7 +58,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Criteria de seleccion:"/>
+            <Property name="text" type="java.lang.String" value="Selection criteria:"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -69,7 +71,7 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="buttonGroup1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Cliente"/>
+            <Property name="text" type="java.lang.String" value="Client"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonClienteActionPerformed"/>
@@ -85,7 +87,7 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="buttonGroup1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Campo"/>
+            <Property name="text" type="java.lang.String" value="Field"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonCampoActionPerformed"/>
@@ -101,7 +103,7 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="buttonGroup1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Macolla"/>
+            <Property name="text" type="java.lang.String" value="Pad/Structure"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonMacollaActionPerformed"/>
@@ -124,7 +126,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="160" y="10" width="230" height="-1"/>
+              <AbsoluteConstraints x="130" y="10" width="230" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -140,7 +142,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="160" y="40" width="230" height="-1"/>
+              <AbsoluteConstraints x="130" y="40" width="230" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -156,7 +158,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="160" y="70" width="230" height="-1"/>
+              <AbsoluteConstraints x="130" y="70" width="230" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -171,7 +173,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="740" y="10" width="190" height="-1"/>
+              <AbsoluteConstraints x="900" y="10" width="190" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -185,7 +187,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="430" y="60" width="50" height="-1"/>
+              <AbsoluteConstraints x="390" y="60" width="50" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -199,33 +201,33 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="500" y="60" width="50" height="-1"/>
+              <AbsoluteConstraints x="460" y="60" width="50" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Hasta:"/>
+            <Property name="text" type="java.lang.String" value="To:"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="500" y="40" width="-1" height="-1"/>
+              <AbsoluteConstraints x="460" y="40" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Desde:"/>
+            <Property name="text" type="java.lang.String" value="From:"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="430" y="40" width="-1" height="-1"/>
+              <AbsoluteConstraints x="390" y="40" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
         <Component class="javax.swing.JButton" name="jButtonBuscarCorridas">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Buscar Corridas"/>
+            <Property name="text" type="java.lang.String" value="Search for runs"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -236,7 +238,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="820" y="60" width="-1" height="-1"/>
+              <AbsoluteConstraints x="980" y="60" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -246,14 +248,14 @@
               <ComponentRef name="buttonGroup2"/>
             </Property>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="dls"/>
+            <Property name="text" type="java.lang.String" value="DLS (&#xb0;/100ft)"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonDlsActionPerformed"/>
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="430" y="10" width="-1" height="-1"/>
+              <AbsoluteConstraints x="380" y="10" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -262,14 +264,15 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="buttonGroup2"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Br"/>
+            <Property name="text" type="java.lang.String" value="BR"/>
+            <Property name="actionCommand" type="java.lang.String" value="BR"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonBrActionPerformed"/>
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="470" y="10" width="-1" height="-1"/>
+              <AbsoluteConstraints x="480" y="10" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -278,11 +281,11 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="buttonGroup2"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Tr"/>
+            <Property name="text" type="java.lang.String" value="TR"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="510" y="10" width="-1" height="-1"/>
+              <AbsoluteConstraints x="530" y="10" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -290,10 +293,10 @@
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="4">
-                <StringItem index="0" value="inclinacion( 0 -29)"/>
-                <StringItem index="1" value="inclinacion (30 - 59)"/>
-                <StringItem index="2" value="inclinacion (60 - 74)"/>
-                <StringItem index="3" value="inclinacion (75 100)"/>
+                <StringItem index="0" value="inclination( 0 -29)"/>
+                <StringItem index="1" value="inclination (30 - 59)"/>
+                <StringItem index="2" value="inclination (60 - 74)"/>
+                <StringItem index="3" value="inclination (75 100)"/>
               </StringArray>
             </Property>
           </Properties>
@@ -302,7 +305,71 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="560" y="10" width="150" height="-1"/>
+              <AbsoluteConstraints x="600" y="10" width="170" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="jComboBoxDiameter">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxDiameterActionPerformed"/>
+          </Events>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="560" y="60" width="210" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="jRadioButtonMotor">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup3"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Motor"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonMotorActionPerformed"/>
+          </Events>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="800" y="10" width="-1" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="jRadioButtonRSS">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup3"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="RSS"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonRSSActionPerformed"/>
+          </Events>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="800" y="30" width="50" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="jRadioButtonMotorAndRSS">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup3"/>
+            </Property>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="Motor &amp; RSS"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonMotorAndRSSActionPerformed"/>
+          </Events>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="800" y="50" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -324,13 +391,13 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="7" rowCount="500">
-                <Column editable="false" title="Campo" type="java.lang.Object"/>
-                <Column editable="false" title="Macolla" type="java.lang.Object"/>
-                <Column editable="false" title="Pozo" type="java.lang.Object"/>
-                <Column editable="false" title="Seccion" type="java.lang.Object"/>
-                <Column editable="false" title="Corrida" type="java.lang.Object"/>
-                <Column editable="false" title="md" type="java.lang.Object"/>
-                <Column editable="false" title="tvd" type="java.lang.Object"/>
+                <Column editable="false" title="Field" type="java.lang.Object"/>
+                <Column editable="false" title="Pad" type="java.lang.Object"/>
+                <Column editable="false" title="Well" type="java.lang.Object"/>
+                <Column editable="false" title="Section" type="java.lang.Object"/>
+                <Column editable="false" title="Run" type="java.lang.Object"/>
+                <Column editable="false" title="MD (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="TVD (ft)" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -409,16 +476,16 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="10" rowCount="1">
-                <Column editable="false" title="md" type="java.lang.Object"/>
-                <Column editable="false" title="incl" type="java.lang.Object"/>
-                <Column editable="false" title="azim" type="java.lang.Object"/>
-                <Column editable="false" title="tvd" type="java.lang.Object"/>
-                <Column editable="false" title="vsec" type="java.lang.Object"/>
-                <Column editable="false" title="ns" type="java.lang.Object"/>
-                <Column editable="false" title="ew" type="java.lang.Object"/>
-                <Column editable="false" title="dls" type="java.lang.Object"/>
-                <Column editable="false" title="tr" type="java.lang.Object"/>
-                <Column editable="false" title="br" type="java.lang.Object"/>
+                <Column editable="false" title="MD (ft) " type="java.lang.Object"/>
+                <Column editable="false" title="INCL (Deg)" type="java.lang.Object"/>
+                <Column editable="false" title="AZIM (Deg)" type="java.lang.Object"/>
+                <Column editable="false" title="TVD ( ft)" type="java.lang.Object"/>
+                <Column editable="false" title="VSEC (ft)" type="java.lang.Object"/>
+                <Column editable="false" title=" NS (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="EW (ft)" type="java.lang.Object"/>
+                <Column editable="false" title=" DLS (&#xb0;/100ft)" type="java.lang.Object"/>
+                <Column editable="false" title=" TR (&#xb0;/100ft)" type="java.lang.Object"/>
+                <Column editable="false" title=" BUR (&#xb0;/100ft)" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="enabled" type="boolean" value="false"/>
@@ -452,16 +519,16 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="10" rowCount="2">
-                <Column editable="false" title="md" type="java.lang.Object"/>
-                <Column editable="false" title="incl" type="java.lang.Object"/>
-                <Column editable="false" title="azim" type="java.lang.Object"/>
-                <Column editable="false" title="tvd" type="java.lang.Object"/>
-                <Column editable="false" title="vsec" type="java.lang.Object"/>
-                <Column editable="false" title="ns" type="java.lang.Object"/>
-                <Column editable="false" title="ew" type="java.lang.Object"/>
-                <Column editable="false" title="dls" type="java.lang.Object"/>
-                <Column editable="false" title="tr" type="java.lang.Object"/>
-                <Column editable="false" title="br" type="java.lang.Object"/>
+                <Column editable="false" title="MD (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="INCL (Deg)" type="java.lang.Object"/>
+                <Column editable="false" title="AZIM (Deg)" type="java.lang.Object"/>
+                <Column editable="false" title="TVD ( ft)" type="java.lang.Object"/>
+                <Column editable="false" title="VSEC (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="NS (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="EW (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="DLS (&#xb0;/100ft)" type="java.lang.Object"/>
+                <Column editable="false" title="TR (&#xb0;/100ft)" type="java.lang.Object"/>
+                <Column editable="false" title="BUR (&#xb0;/100ft)" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="enabled" type="boolean" value="false"/>
@@ -495,24 +562,24 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="18" rowCount="200">
-                <Column editable="false" title="fecha" type="java.lang.Object"/>
-                <Column editable="false" title="start time" type="java.lang.Object"/>
-                <Column editable="false" title="end time" type="java.lang.Object"/>
-                <Column editable="false" title="md from" type="java.lang.Object"/>
-                <Column editable="false" title="md to" type="java.lang.Object"/>
-                <Column editable="false" title="delta md" type="java.lang.Object"/>
-                <Column editable="false" title="operation mode" type="java.lang.Object"/>
-                <Column editable="false" title="tf mode" type="java.lang.Object"/>
-                <Column editable="false" title="tf angle" type="java.lang.Object"/>
-                <Column editable="false" title="flow" type="java.lang.Object"/>
-                <Column editable="false" title="spf off bott" type="java.lang.Object"/>
-                <Column editable="false" title="spf on bott" type="java.lang.Object"/>
-                <Column editable="false" title="differential" type="java.lang.Object"/>
-                <Column editable="false" title="wob" type="java.lang.Object"/>
-                <Column editable="false" title="srpm" type="java.lang.Object"/>
-                <Column editable="false" title="torque" type="java.lang.Object"/>
-                <Column editable="false" title="offBottTorque" type="java.lang.Object"/>
-                <Column editable="false" title="desired Power Setting" type="java.lang.Object"/>
+                <Column editable="false" title="Date" type="java.lang.Object"/>
+                <Column editable="false" title="Start Time" type="java.lang.Object"/>
+                <Column editable="false" title="End Time" type="java.lang.Object"/>
+                <Column editable="false" title="MD from (ft)" type="java.lang.Object"/>
+                <Column editable="false" title=" MD to (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="Course (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="Operation Mode" type="java.lang.Object"/>
+                <Column editable="false" title="TF Mode" type="java.lang.Object"/>
+                <Column editable="false" title="TF Angle (deg)" type="java.lang.Object"/>
+                <Column editable="false" title="Flow (gal/min)" type="java.lang.Object"/>
+                <Column editable="false" title="SPP Off Bott (psi) " type="java.lang.Object"/>
+                <Column editable="false" title="SPP Off Bott (psi) " type="java.lang.Object"/>
+                <Column editable="false" title="Differential (psi)" type="java.lang.Object"/>
+                <Column editable="false" title="WOB (1000 lbf)" type="java.lang.Object"/>
+                <Column editable="false" title="SRPM (c/min)" type="java.lang.Object"/>
+                <Column editable="false" title="Torque (1000 ft.lbf)" type="java.lang.Object"/>
+                <Column editable="false" title="Off Bot Torque (1000 ft.lbf)" type="java.lang.Object"/>
+                <Column editable="false" title="Desired Power Setting" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="autoResizeMode" type="int" value="0"/>
@@ -634,9 +701,9 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="3" rowCount="200">
-                <Column editable="false" title="dept" type="java.lang.Object"/>
-                <Column editable="false" title="gr" type="java.lang.Object"/>
-                <Column editable="false" title="p40hunc" type="java.lang.Object"/>
+                <Column editable="false" title="MD (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="GR (GAPI)" type="java.lang.Object"/>
+                <Column editable="false" title="Resistivity OHM.M" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="enabled" type="boolean" value="false"/>
@@ -681,7 +748,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="12" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="graficar"/>
+        <Property name="text" type="java.lang.String" value="Plot"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
         </Property>
@@ -702,7 +769,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelPorcentajeArena">
       <Properties>
-        <Property name="text" type="java.lang.String" value="% Arena:"/>
+        <Property name="text" type="java.lang.String" value="% Sand:"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -725,7 +792,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="11" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Corridas (Mostrar BHA)"/>
+        <Property name="text" type="java.lang.String" value=" Runs (Show BHA)"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
         </Property>
@@ -738,7 +805,7 @@
       </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="120" y="120" width="150" height="-1"/>
+          <AbsoluteConstraints x="70" y="120" width="120" height="20"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -753,17 +820,17 @@
       </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="430" y="120" width="60" height="-1"/>
+          <AbsoluteConstraints x="430" y="120" width="50" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Rango TVD:"/>
+        <Property name="text" type="java.lang.String" value="TVD To (ft):"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="290" y="120" width="-1" height="-1"/>
+          <AbsoluteConstraints x="360" y="120" width="60" height="20"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -778,7 +845,7 @@
       </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="360" y="120" width="60" height="-1"/>
+          <AbsoluteConstraints x="290" y="120" width="50" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -827,7 +894,7 @@
       </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="480" y="530" width="90" height="-1"/>
+          <AbsoluteConstraints x="510" y="530" width="70" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -841,17 +908,17 @@
       </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="310" y="530" width="90" height="-1"/>
+          <AbsoluteConstraints x="300" y="530" width="70" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelLatitud">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Latitud:"/>
+        <Property name="text" type="java.lang.String" value="Location grid N (m):"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="260" y="530" width="-1" height="-1"/>
+          <AbsoluteConstraints x="190" y="530" width="-1" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -865,17 +932,17 @@
       </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="590" y="530" width="60" height="-1"/>
+          <AbsoluteConstraints x="620" y="530" width="-1" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelLongitud">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Longitud:"/>
+        <Property name="text" type="java.lang.String" value="Location grid E (m):"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="420" y="530" width="-1" height="-1"/>
+          <AbsoluteConstraints x="390" y="530" width="-1" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -884,11 +951,11 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="12" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Distancia:"/>
+        <Property name="text" type="java.lang.String" value=" Distance (m):"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="670" y="530" width="190" height="-1"/>
+          <AbsoluteConstraints x="680" y="530" width="180" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -897,11 +964,21 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="11" style="2"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Origen:"/>
+        <Property name="text" type="java.lang.String" value="Origin:"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="260" y="490" width="-1" height="-1"/>
+          <AbsoluteConstraints x="190" y="490" width="660" height="-1"/>
+        </Constraint>
+      </Constraints>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel7">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="TVD From (ft):"/>
+      </Properties>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="200" y="120" width="80" height="20"/>
         </Constraint>
       </Constraints>
     </Component>
