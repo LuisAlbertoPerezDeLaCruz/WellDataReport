@@ -63,7 +63,7 @@ public class Rpt005 extends javax.swing.JDialog {
         setearTimer();
         oBD=o;
         oManejoDeCombos = new ManejoDeCombos(); 
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Seleccione Cliente"); 
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Select Client"); 
 
         oManejoDeCombos.llenaCombo(oBD,modeloCombo,DrillingSubSectionType.class,this.jComboBoxSubSections,"");
         jComboBoxSubSections.setEnabled(true);
@@ -118,7 +118,7 @@ public class Rpt005 extends javax.swing.JDialog {
         
         modelTable1 = new DefaultTableModel();
         jTable1.setModel(modelTable1);
-        
+ 
         //Segmento tabla1
        
         s="SELECT CampoCliente.campoId, Well.macollaId, Well.id AS wellId, Well.nombre as wellNombre, Run.Id, Survey.id, SurveyPerMD.md, SurveyPerMD.tvd, SurveyPerMD.dls, BHA.tipoDT, DrillingSubSectionType.description\n" +
@@ -200,13 +200,16 @@ public class Rpt005 extends javax.swing.JDialog {
         }
         //Ya con los resultados parciales calculo el dls al 100% y lo plasmo en pantalla
         //Recorro primero por columnas (Pozos) y las agrego al modelo
-        modelTable1.addColumn("<html>Reservoir<br>Azim<br>TVD");
+        modelTable1.addColumn("<html>Target reservoir<br>(Azim (deg))<br>TVD (ft) / Well Name");
         for (String pozo : listOfColumnas) {
             modelTable1.addColumn(pozo);
         }
         modelTable1.addColumn("Avg(no turn)");
         modelTable1.addColumn("Avg(Turn right)");
         modelTable1.addColumn("Avg(Turn left)");
+        
+        jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(150);
 
         Object[] fila=new Object[resultado[0].length+4];
         int offset=0;
@@ -319,10 +322,13 @@ public class Rpt005 extends javax.swing.JDialog {
         }
         //Ya con los resultados parciales calculo el dls al 100% y lo plasmo en pantalla
         //Recorro primero por columnas (Pozos) y las agrego al modelo
-        modelTable2.addColumn("<html>Reservoir<br>Azim<br>TVD");
+        modelTable2.addColumn("<html>Target reservoir<br>(Azim (deg))<br>TVD (ft) / Well Name");
         for (String pozo : listOfColumnas) {
             modelTable2.addColumn(pozo);
         }
+        
+        jTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jTable2.getColumnModel().getColumn(0).setPreferredWidth(150);
 
         Object[] fila=new Object[resultado[0].length+1];
         int offset=0;
@@ -350,6 +356,10 @@ public class Rpt005 extends javax.swing.JDialog {
         for (col=0;col<=modelTable2.getColumnCount()-1;col++){
             modelTable3.addColumn(modelTable2.getColumnName(col));
         }
+        
+        jTable3.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jTable3.getColumnModel().getColumn(0).setPreferredWidth(150);
+        
         Object[] fila=null;
         for (row=0;row<=modelTable2.getRowCount()-1;row++){
             fila=new Object[modelTable2.getColumnCount()];
@@ -630,7 +640,7 @@ public class Rpt005 extends javax.swing.JDialog {
         });
         getContentPane().add(jComboBoxCampo, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 30, 210, -1));
 
-        jButtonProcesar.setText("Procesar");
+        jButtonProcesar.setText("Process");
         jButtonProcesar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonProcesarActionPerformed(evt);
@@ -638,7 +648,7 @@ public class Rpt005 extends javax.swing.JDialog {
         });
         getContentPane().add(jButtonProcesar, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 540, -1, -1));
 
-        jButtonSalir.setText("Salir");
+        jButtonSalir.setText("Exit");
         jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSalirActionPerformed(evt);
@@ -646,13 +656,13 @@ public class Rpt005 extends javax.swing.JDialog {
         });
         getContentPane().add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 540, 80, -1));
 
-        jLabel1.setText("Macolla:");
+        jLabel1.setText("Pad:");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 10, 60, -1));
 
-        jLabel5.setText("Cliente:");
+        jLabel5.setText("Client:");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 60, -1));
 
-        jLabel6.setText("Campo:");
+        jLabel6.setText("Field:");
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 10, 50, -1));
 
         jComboBoxMacolla.addActionListener(new java.awt.event.ActionListener() {
@@ -683,7 +693,7 @@ public class Rpt005 extends javax.swing.JDialog {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 400));
 
-        jTabbedPane1.addTab("DLS vs TVD", jPanel1);
+        jTabbedPane1.addTab("DLS Extrapolated 100 % vs TVD", jPanel1);
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -700,7 +710,7 @@ public class Rpt005 extends javax.swing.JDialog {
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 400));
 
-        jTabbedPane1.addTab("TVD vs % arena", jPanel2);
+        jTabbedPane1.addTab("Sand % vs TVD", jPanel2);
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -717,11 +727,11 @@ public class Rpt005 extends javax.swing.JDialog {
 
         jPanel3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 400));
 
-        jTabbedPane1.addTab("TVD vs Clasificación", jPanel3);
+        jTabbedPane1.addTab("Clasification vs TVD", jPanel3);
 
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 840, 430));
 
-        jButtonExportar.setText("Exportar");
+        jButtonExportar.setText("Export");
         jButtonExportar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonExportarActionPerformed(evt);
@@ -737,15 +747,15 @@ public class Rpt005 extends javax.swing.JDialog {
     private void jComboBoxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClientesActionPerformed
         clienteId=oManejoDeCombos.getComboID(this.jComboBoxClientes);
         String s="SELECT campoId,campoNombre from ConsultaCampoCliente1 WHERE clienteId="+clienteId;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Seleccione Campo");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Select Field");
         procesado=false;
     }//GEN-LAST:event_jComboBoxClientesActionPerformed
 
     private void jComboBoxCampoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCampoActionPerformed
         campoId=oManejoDeCombos.getComboID(this.jComboBoxCampo);
         String s="SELECT macollaId,macollaNombre from ConsultaMacolla1 WHERE clienteId="+clienteId + " AND campoId="+campoId;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxMacolla,"Seleccione Macolla o (Todas)");
-        oManejoDeCombos.ingresarAlComboBox("Todas", jComboBoxMacolla);
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxMacolla,"Select Pad or (All)");
+        oManejoDeCombos.ingresarAlComboBox("All", jComboBoxMacolla);
         oManejoDeCombos.setCombo(0, jComboBoxMacolla);
         procesado=false;
     }//GEN-LAST:event_jComboBoxCampoActionPerformed
@@ -760,7 +770,7 @@ public class Rpt005 extends javax.swing.JDialog {
 
     private void jComboBoxMacollaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxMacollaActionPerformed
         macollaId=oManejoDeCombos.getComboID(this.jComboBoxMacolla);
-        if ("Todas".equals(this.jComboBoxMacolla.getSelectedItem().toString())){
+        if ("All".equals(this.jComboBoxMacolla.getSelectedItem().toString())){
             macollaId=valorNulo;
         }
         procesado=false;
@@ -1008,6 +1018,36 @@ class SumatoriaPorcentajeArena{
 }
 
 class RenderComposicion extends DefaultTableCellRenderer
+{
+   public Component getTableCellRendererComponent(JTable table,
+      Object value,
+      boolean isSelected,
+      boolean hasFocus,
+      int row,
+      int column)
+   {
+        super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);
+        this.setBackground(Color.LIGHT_GRAY);
+        if (value==null) return this;
+
+        if ("Sand".equals(value.toString().trim())) {
+            this.setBackground(Color.YELLOW);
+            this.setForeground(Color.BLACK);                   
+        }else if ("Shale".equals(value.toString().trim())) {
+            this.setBackground(Color.DARK_GRAY);
+            this.setForeground(Color.WHITE);                  
+        } else if ("Shale-Sand".equals(value.toString().trim())) {
+            this.setBackground(Color.ORANGE);
+            this.setForeground(Color.red);                  
+        } else {
+            this.setBackground(Color.LIGHT_GRAY);
+            this.setForeground(Color.BLACK);          
+        }           
+      return this;
+   }
+}
+
+class RenderComposicion_ extends DefaultTableCellRenderer
 {
    public Component getTableCellRendererComponent(JTable table,
       Object value,

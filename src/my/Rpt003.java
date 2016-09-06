@@ -108,15 +108,9 @@ public class Rpt003 extends javax.swing.JDialog {
         limpiarTablaDatos();
         limpiarTablaSecciones();
         wellId=0;
-        this.jLabelPozo.setText("Pozo: ");
+        this.jLabelPozo.setText("Well: ");
         this.jTextPaneLeccionesAprendidas.setText("");
         
-        try {
-            this.jComboBoxClientes.setSelectedIndex(0);
-            this.jComboBoxCampo.setSelectedIndex(0);
-            this.jComboBoxMacolla.setSelectedIndex(0);
-        } catch (IllegalArgumentException ex) {};
-
         this.jComboBoxClientes.setEnabled(false);
         this.jComboBoxCampo.setEnabled(false);
         this.jComboBoxMacolla.setEnabled(false);
@@ -172,7 +166,7 @@ public class Rpt003 extends javax.swing.JDialog {
             muestraInformacionPozo(wellId);
         }
         catch (ArrayIndexOutOfBoundsException ex){return;};
-        this.jLabelPozo.setText("Pozo: "+s);
+        this.jLabelPozo.setText("Well: "+s);
     }
     
     private void ubicaMacollaCampoCliente(long wellId) {
@@ -293,15 +287,15 @@ public class Rpt003 extends javax.swing.JDialog {
             s+="WHERE wellId="+wellId+" ";
             s+="ORDER by md ASC";
             
-            this.jTableDatos.setValueAt("Long/Tanjente",0,0);
-            this.jTableDatos.setValueAt("Long/Horizontal",1,0);
-            this.jTableDatos.setValueAt("% arena seccion Hz",2,0);
-            this.jTableDatos.setValueAt("Tipo de Pozo",3,0);
-            this.jTableDatos.setValueAt("Azim antes Tang",4,0);
-            this.jTableDatos.setValueAt("Azim despues Tang",5,0);
-            this.jTableDatos.setValueAt("DDI ultima seccion",6,0);
-            this.jTableDatos.setValueAt("ERD ultima seccion",7,0);
-            this.jTableDatos.setValueAt("TORT ultima seccion",8,0);
+            this.jTableDatos.setValueAt("Tangent length (ft)",0,0);
+            this.jTableDatos.setValueAt("Horizontal length (ft)",1,0);
+            this.jTableDatos.setValueAt("Sand % Horizontal Section",2,0);
+            this.jTableDatos.setValueAt("Well Type",3,0);
+            this.jTableDatos.setValueAt("Azim before tangent",4,0);
+            this.jTableDatos.setValueAt("Azim after tangent",5,0);
+            this.jTableDatos.setValueAt("DDI",6,0);
+            this.jTableDatos.setValueAt("ERD",7,0);
+            this.jTableDatos.setValueAt("TORT",8,0);
             
             this.jTableDatos.setValueAt(0,0,1);
             this.jTableDatos.setValueAt(0,1,1);
@@ -567,7 +561,7 @@ public class Rpt003 extends javax.swing.JDialog {
     
     private void graficar(int rowsIn1,double[][] ploteo1,int rowsIn2,double[][] ploteo2,int rowsIn3,double[][] ploteo3,int rowsIn4,double[][] ploteo4) {
         JFreeChart oJFreeChart1 = ChartFactory.createXYLineChart(
-            "TVD vs %Steering" ,
+            "TVD vs % Steering" ,
             "TVD (feet)" ,
             "%Steering" ,
             createDataset(rowsIn1, ploteo1) ,
@@ -575,7 +569,7 @@ public class Rpt003 extends javax.swing.JDialog {
             true , true , true);
         
         JFreeChart oJFreeChart2 = ChartFactory.createXYLineChart(
-            "TVD vs dls/delta md Steering" ,
+            "TVD vs Yield" ,
             "TVD (feet)" ,
             "dls/delta md Steering" ,
             createDataset(rowsIn2, ploteo2) ,
@@ -583,7 +577,7 @@ public class Rpt003 extends javax.swing.JDialog {
             true , true , true); 
         
         JFreeChart oJFreeChart3 = ChartFactory.createXYLineChart(
-            "TVD vs dls" ,
+            "TVD vs DLS" ,
             "TVD (feet)" ,
             "dls" ,
             createDataset(rowsIn3, ploteo3) ,
@@ -591,7 +585,7 @@ public class Rpt003 extends javax.swing.JDialog {
             false , true , false); 
         
         JFreeChart oJFreeChart4 = ChartFactory.createXYLineChart(
-            "TVD vs gr" ,
+            "TVD vs GR" ,
             "TVD (feet)" ,
             "gr" ,
             createDataset(rowsIn4, ploteo4) ,
@@ -621,7 +615,7 @@ public class Rpt003 extends javax.swing.JDialog {
         Ventana = new JDialog(this,false);
         Ventana.setPreferredSize(new Dimension(900,680));
         Ventana.setMinimumSize(new Dimension(900,680));
-        Ventana.setTitle("Graficas de TVD");
+        Ventana.setTitle("TVD Plots");
  
         JPanel jp=new JPanel();
         jp.setLayout(new GridLayout());
@@ -680,7 +674,7 @@ public class Rpt003 extends javax.swing.JDialog {
             this.jComboBoxCampo.setEnabled(true);
             this.jComboBoxMacolla.setEnabled(true);            
         }
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Seleccione Cliente"); 
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Select Client"); 
     }
     
     private void borrarInfoPozo() {
@@ -695,7 +689,7 @@ public class Rpt003 extends javax.swing.JDialog {
             }            
         }
         this.jTextPaneLeccionesAprendidas.setText("");
-        this.jLabelPozo.setText("Pozo:");
+        this.jLabelPozo.setText("Well:");
         modeloLista.removeAllElements();
         this.jTextFieldBuscar.setText("");
         wellId=0;
@@ -775,10 +769,10 @@ public class Rpt003 extends javax.swing.JDialog {
                 rowhead[row].createCell(8).setCellValue("% Steering");
                 rowhead[row].createCell(9).setCellValue("dls/deltaMdSteering");                    
              
-                rowhead[row].createCell(10).setCellValue("% arena");
-                rowhead[row].createCell(11).setCellValue("clasificacion");
+                rowhead[row].createCell(10).setCellValue("% sand");
+                rowhead[row].createCell(11).setCellValue("classification");
                 
-                rowhead[row].createCell(12).setCellValue("Tipo Sub-Seccion");
+                rowhead[row].createCell(12).setCellValue("Sub-Seccion type");
 
                 for  (int j=0;j<=aTD[0].length-1;j++) {                
                     if (aTD[i][j] != null) {
@@ -838,19 +832,19 @@ public class Rpt003 extends javax.swing.JDialog {
                 rowhead[1].createCell(1).setCellValue("Division: ");
                 rowhead[1].createCell(2).setCellValue(o.divisionNombre);
 
-                rowhead[2].createCell(1).setCellValue("Cliente: ");
+                rowhead[2].createCell(1).setCellValue("Client: ");
                 rowhead[2].createCell(2).setCellValue(o.clienteNombre);
 
-                rowhead[3].createCell(1).setCellValue("Campo: ");
+                rowhead[3].createCell(1).setCellValue("Field: ");
                 rowhead[3].createCell(2).setCellValue(o.campoNombre);
 
-                rowhead[4].createCell(1).setCellValue("Macolla: ");
+                rowhead[4].createCell(1).setCellValue("Pad: ");
                 rowhead[4].createCell(2).setCellValue(o.macollaNombre);
 
-                rowhead[5].createCell(1).setCellValue("Pozo: ");
+                rowhead[5].createCell(1).setCellValue("Well: ");
                 rowhead[5].createCell(2).setCellValue(o.wellNombre);
 
-                rowhead[1].createCell(6).setCellValue("Lecciones Aprendidas: "+o.leccionesAprendidas);
+                rowhead[1].createCell(6).setCellValue("Lessons Learned: "+o.leccionesAprendidas);
 
                 sheet.addMergedRegion(new CellRangeAddress(1,5,6,12));
 
@@ -1439,11 +1433,11 @@ public class Rpt003 extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setText("Criteria de seleccion:");
+        jLabel1.setText("Selection criteria:");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
         buttonGroup1.add(jRadioButtonCliente);
-        jRadioButtonCliente.setText("Cliente");
+        jRadioButtonCliente.setText("Client");
         jRadioButtonCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonClienteActionPerformed(evt);
@@ -1452,7 +1446,7 @@ public class Rpt003 extends javax.swing.JDialog {
         jPanel1.add(jRadioButtonCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
         buttonGroup1.add(jRadioButtonCampo);
-        jRadioButtonCampo.setText("Campo");
+        jRadioButtonCampo.setText("Field");
         jRadioButtonCampo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonCampoActionPerformed(evt);
@@ -1461,7 +1455,7 @@ public class Rpt003 extends javax.swing.JDialog {
         jPanel1.add(jRadioButtonCampo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
 
         buttonGroup1.add(jRadioButtonMacolla);
-        jRadioButtonMacolla.setText("Macolla");
+        jRadioButtonMacolla.setText("Pad");
         jRadioButtonMacolla.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonMacollaActionPerformed(evt);
@@ -1494,7 +1488,7 @@ public class Rpt003 extends javax.swing.JDialog {
         jPanel1.add(jComboBoxMacolla, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 70, 230, -1));
         jPanel1.add(jTextFieldBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 10, 140, 30));
 
-        jLabelPozo.setText("Pozo:");
+        jLabelPozo.setText("Well:");
         jLabelPozo.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.add(jLabelPozo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 370, -1));
 
@@ -1545,7 +1539,7 @@ public class Rpt003 extends javax.swing.JDialog {
 
         getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 310, 280));
 
-        jLabelLongitud2.setText("Lecciones Aprendidas:");
+        jLabelLongitud2.setText("Lessons Learned:");
         getContentPane().add(jLabelLongitud2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
 
         jTableSecciones.setModel(new javax.swing.table.DefaultTableModel(
@@ -1562,7 +1556,7 @@ public class Rpt003 extends javax.swing.JDialog {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Seccion #", "long/md", "corridas", "brt", "dls Max", "dls Min"
+                "Section", "Length (ft)", "Runs", "BRT (Hours)", "DLS Max (°/100ft)", "DLS Min (°/100ft)"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1590,7 +1584,7 @@ public class Rpt003 extends javax.swing.JDialog {
                 {null, null}
             },
             new String [] {
-                "Descripción", "Valor"
+                "Description", "Values"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1606,8 +1600,8 @@ public class Rpt003 extends javax.swing.JDialog {
         getContentPane().add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, 310, 180));
 
         jLabelGraficar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabelGraficar.setText("Graficas de TVD");
-        jLabelGraficar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelGraficar.setText("TVD plots");
+        jLabelGraficar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabelGraficar.setEnabled(false);
         jLabelGraficar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1623,8 +1617,8 @@ public class Rpt003 extends javax.swing.JDialog {
         getContentPane().add(jLabelGraficar, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 460, 100, -1));
 
         jLabelExportarSummary.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabelExportarSummary.setText("Exportar Summary");
-        jLabelExportarSummary.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelExportarSummary.setText("Export Summary");
+        jLabelExportarSummary.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabelExportarSummary.setEnabled(false);
         jLabelExportarSummary.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1640,8 +1634,8 @@ public class Rpt003 extends javax.swing.JDialog {
         getContentPane().add(jLabelExportarSummary, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 460, 120, -1));
 
         jLabelExportarTVD.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabelExportarTVD.setText("Exportar TVD/Sección");
-        jLabelExportarTVD.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelExportarTVD.setText("Export TVD Analysis");
+        jLabelExportarTVD.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabelExportarTVD.setEnabled(false);
         jLabelExportarTVD.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1674,14 +1668,14 @@ public class Rpt003 extends javax.swing.JDialog {
     private void jComboBoxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClientesActionPerformed
         clienteId=oManejoDeCombos.getComboID(this.jComboBoxClientes);
         String s="SELECT campoId,campoNombre from ConsultaCampoCliente1 WHERE clienteId="+clienteId;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Seleccione Campo");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Select Field");
     }//GEN-LAST:event_jComboBoxClientesActionPerformed
 
     private void jComboBoxCampoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCampoActionPerformed
         clienteId=oManejoDeCombos.getComboID(this.jComboBoxClientes);
         campoId=oManejoDeCombos.getComboID(this.jComboBoxCampo);
         String s="SELECT macollaId,macollaNombre from ConsultaMacolla1 WHERE clienteId="+clienteId + " AND campoId="+campoId;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxMacolla,"Seleccione Macolla");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxMacolla,"Select Pad");
     }//GEN-LAST:event_jComboBoxCampoActionPerformed
 
     private void jComboBoxMacollaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxMacollaActionPerformed

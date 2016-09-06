@@ -73,13 +73,19 @@ public class Rpt004 extends javax.swing.JDialog {
         super(parent, modal);
         String s="";
         initComponents();
+
+        for (int i=0;i<=this.jTableResultados.getColumnCount()-1;i++)
+            this.jTableResultados.getColumnModel().getColumn(i).setPreferredWidth(100);
+        this.jTableResultados.getColumnModel().getColumn(10).setPreferredWidth(200);
+        this.jTableResultados.getColumnModel().getColumn(22).setPreferredWidth(150);
+
         setearTimer();
         this.jTableResultados.setDefaultRenderer (Object.class, new MiRender());
         this.jRadioButtonMotor.setSelected(true);
         modeloResultados = (DefaultTableModel) this.jTableResultados.getModel();
         oBD=o;
         oManejoDeCombos = new ManejoDeCombos(); 
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Seleccione Cliente"); 
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Clientes.class,this.jComboBoxClientes,"Select Client"); 
         oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Diameters.class,this.jComboBoxOD,"OD"); 
         s="SELECT DISTINCT TipoMotor.bendHousingAngle\n" +
           "FROM TipoMotor\n" +
@@ -935,7 +941,7 @@ public class Rpt004 extends javax.swing.JDialog {
                 {null, null, null, null}
             },
             new String [] {
-                "nro", "Tipo", "TVD desde", "TVD hasta"
+                "Number", "Sub-Section Type", "TVD from (ft)", "TVD to (ft)"
             }
         ) {
             Class[] types = new Class [] {
@@ -990,7 +996,7 @@ public class Rpt004 extends javax.swing.JDialog {
         });
         getContentPane().add(jComboBoxOD, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 50, 120, -1));
 
-        jButtonEscogerPlan.setText("Well Plan");
+        jButtonEscogerPlan.setText("Import well plan");
         jButtonEscogerPlan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonEscogerPlanActionPerformed(evt);
@@ -998,7 +1004,7 @@ public class Rpt004 extends javax.swing.JDialog {
         });
         getContentPane().add(jButtonEscogerPlan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 520, -1, -1));
 
-        jButtonProcesar.setText("Procesar");
+        jButtonProcesar.setText("Process");
         jButtonProcesar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonProcesarActionPerformed(evt);
@@ -1006,7 +1012,7 @@ public class Rpt004 extends javax.swing.JDialog {
         });
         getContentPane().add(jButtonProcesar, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 520, -1, -1));
 
-        jButtonSalir.setText("Salir");
+        jButtonSalir.setText("Exit");
         jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSalirActionPerformed(evt);
@@ -1047,7 +1053,7 @@ public class Rpt004 extends javax.swing.JDialog {
 
             },
             new String [] {
-                "md", "incl", "azim", "tvd", "vsec", "ns", "ew", "dls", "tf", "subseccion", "dls 100%", "n", "s", "risk%", "% Arena", "n", "s", "composicion", "flow", "wob", "differential", "srpm", "tfAngle"
+                "MD", "Incl (deg) ", "AZIM (deg)", "TVD (ft) ", "VSEC (ft)", "NS (ft)", "EW (ft)", "DLS (°/100ft) ", "TF Proposed (deg)", "SubSection ", "DLS extrapolated 100% (°/100ft)", "n", "s", " Risk 100 %", "Sand % ", "n", "s", "Formation", "Flow (gal/min)", "WOB (1000 lbf)", "Differential (psi)", "SRPM (c/min)", "TF Angle Average (deg)"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1061,24 +1067,24 @@ public class Rpt004 extends javax.swing.JDialog {
         jTableResultados.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jScrollPane1.setViewportView(jTableResultados);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 870, 300));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 870, 300));
 
-        jLabel1.setText("Macollas:");
+        jLabel1.setText("Pads:");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 10, 60, -1));
 
-        jLabel2.setText("Diametro (OD):");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 30, 90, -1));
+        jLabel2.setText("Hole Size (OD in):");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 30, 120, -1));
 
-        jLabel3.setText("Bend Housing Angle:");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 80, 120, -1));
+        jLabel3.setText("Bend housing angle (deg):");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 80, 140, -1));
 
         jLabel4.setText("Directional Tool:");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 130, -1, -1));
 
-        jLabel5.setText("Cliente:");
+        jLabel5.setText("Client:");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 60, -1));
 
-        jLabel6.setText("Campo:");
+        jLabel6.setText("Field:");
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 10, 50, -1));
 
         pack();
@@ -1087,7 +1093,7 @@ public class Rpt004 extends javax.swing.JDialog {
     private void jComboBoxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClientesActionPerformed
         clienteId=oManejoDeCombos.getComboID(this.jComboBoxClientes);
         String s="SELECT campoId,campoNombre from ConsultaCampoCliente1 WHERE clienteId="+clienteId;
-        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Seleccione Campo");
+        oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),s,this.jComboBoxCampo,"Select Field");
     }//GEN-LAST:event_jComboBoxClientesActionPerformed
 
     private void jComboBoxCampoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCampoActionPerformed

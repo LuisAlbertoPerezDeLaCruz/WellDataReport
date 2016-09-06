@@ -100,10 +100,10 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="30">
-                <Column editable="false" title="nro" type="java.lang.Integer"/>
-                <Column editable="true" title="Tipo" type="java.lang.Object"/>
-                <Column editable="true" title="TVD desde" type="java.lang.Double"/>
-                <Column editable="true" title="TVD hasta" type="java.lang.Double"/>
+                <Column editable="false" title="Number" type="java.lang.Integer"/>
+                <Column editable="true" title="Sub-Section Type" type="java.lang.Object"/>
+                <Column editable="true" title="TVD from (ft)" type="java.lang.Double"/>
+                <Column editable="true" title="TVD to (ft)" type="java.lang.Double"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -161,7 +161,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButtonEscogerPlan">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Well Plan"/>
+        <Property name="text" type="java.lang.String" value="Import well plan"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonEscogerPlanActionPerformed"/>
@@ -174,7 +174,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButtonProcesar">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Procesar"/>
+        <Property name="text" type="java.lang.String" value="Process"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonProcesarActionPerformed"/>
@@ -187,7 +187,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButtonSalir">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Salir"/>
+        <Property name="text" type="java.lang.String" value="Exit"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSalirActionPerformed"/>
@@ -255,7 +255,7 @@
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="20" y="210" width="870" height="300"/>
+          <AbsoluteConstraints x="20" y="200" width="870" height="300"/>
         </Constraint>
       </Constraints>
 
@@ -265,29 +265,29 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="23" rowCount="0">
-                <Column editable="false" title="md" type="java.lang.Object"/>
-                <Column editable="false" title="incl" type="java.lang.Object"/>
-                <Column editable="false" title="azim" type="java.lang.Object"/>
-                <Column editable="false" title="tvd" type="java.lang.Object"/>
-                <Column editable="false" title="vsec" type="java.lang.Object"/>
-                <Column editable="false" title="ns" type="java.lang.Object"/>
-                <Column editable="false" title="ew" type="java.lang.Object"/>
-                <Column editable="false" title="dls" type="java.lang.Object"/>
-                <Column editable="false" title="tf" type="java.lang.Object"/>
-                <Column editable="false" title="subseccion" type="java.lang.Object"/>
-                <Column editable="false" title="dls 100%" type="java.lang.Object"/>
+                <Column editable="false" title="MD" type="java.lang.Object"/>
+                <Column editable="false" title="Incl (deg) " type="java.lang.Object"/>
+                <Column editable="false" title="AZIM (deg)" type="java.lang.Object"/>
+                <Column editable="false" title="TVD (ft) " type="java.lang.Object"/>
+                <Column editable="false" title="VSEC (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="NS (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="EW (ft)" type="java.lang.Object"/>
+                <Column editable="false" title="DLS (&#xb0;/100ft) " type="java.lang.Object"/>
+                <Column editable="false" title="TF Proposed (deg)" type="java.lang.Object"/>
+                <Column editable="false" title="SubSection " type="java.lang.Object"/>
+                <Column editable="false" title="DLS extrapolated 100% (&#xb0;/100ft)" type="java.lang.Object"/>
                 <Column editable="false" title="n" type="java.lang.Object"/>
                 <Column editable="false" title="s" type="java.lang.Object"/>
-                <Column editable="false" title="risk%" type="java.lang.Object"/>
-                <Column editable="false" title="% Arena" type="java.lang.Object"/>
+                <Column editable="false" title=" Risk 100 %" type="java.lang.Object"/>
+                <Column editable="false" title="Sand % " type="java.lang.Object"/>
                 <Column editable="false" title="n" type="java.lang.Object"/>
                 <Column editable="false" title="s" type="java.lang.Object"/>
-                <Column editable="false" title="composicion" type="java.lang.Object"/>
-                <Column editable="false" title="flow" type="java.lang.Object"/>
-                <Column editable="false" title="wob" type="java.lang.Object"/>
-                <Column editable="false" title="differential" type="java.lang.Object"/>
-                <Column editable="false" title="srpm" type="java.lang.Object"/>
-                <Column editable="false" title="tfAngle" type="java.lang.Object"/>
+                <Column editable="false" title="Formation" type="java.lang.Object"/>
+                <Column editable="false" title="Flow (gal/min)" type="java.lang.Object"/>
+                <Column editable="false" title="WOB (1000 lbf)" type="java.lang.Object"/>
+                <Column editable="false" title="Differential (psi)" type="java.lang.Object"/>
+                <Column editable="false" title="SRPM (c/min)" type="java.lang.Object"/>
+                <Column editable="false" title="TF Angle Average (deg)" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="autoResizeMode" type="int" value="0"/>
@@ -419,7 +419,7 @@
     </Container>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Macollas:"/>
+        <Property name="text" type="java.lang.String" value="Pads:"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -429,21 +429,21 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Diametro (OD):"/>
+        <Property name="text" type="java.lang.String" value="Hole Size (OD in):"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="760" y="30" width="90" height="-1"/>
+          <AbsoluteConstraints x="760" y="30" width="120" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Bend Housing Angle:"/>
+        <Property name="text" type="java.lang.String" value="Bend housing angle (deg):"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="760" y="80" width="120" height="-1"/>
+          <AbsoluteConstraints x="760" y="80" width="140" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>
@@ -459,7 +459,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Cliente:"/>
+        <Property name="text" type="java.lang.String" value="Client:"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -469,7 +469,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Campo:"/>
+        <Property name="text" type="java.lang.String" value="Field:"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
