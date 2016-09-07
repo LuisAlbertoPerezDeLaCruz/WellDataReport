@@ -508,6 +508,8 @@ public class Rpt003 extends javax.swing.JDialog {
     
     private double [][] graficarTvdVsDls() {
         double [][] ploteo=null;
+        int p=0;
+        double tvd=0, dls=0;
         TvdDetail oTD=null;
         String s;
         Calculos oCalc=new Calculos(oBD);
@@ -516,8 +518,13 @@ public class Rpt003 extends javax.swing.JDialog {
         ploteo=new double[oCalc.getSurveyPerMd().length][2];
         for (int i=0;i<=oCalc.getSurveyPerMd().length-1;i++) {
             oSurveyPerMd=oCalc.getSurveyPerMd()[i];
-            ploteo[i][0]=oCalc.getTVD(oSurveyPerMd.getMd());
-            ploteo[i][1]=oCalc.getDls(oSurveyPerMd.getMd());
+            tvd=oCalc.getTVD(oSurveyPerMd.getMd());
+            dls=oCalc.getDls(oSurveyPerMd.getMd());
+            if (dls>=0 && tvd>=0) {
+                ploteo[p][0]=tvd;
+                ploteo[p][1]=dls;
+                p++;
+            }
          }        
         return ploteo;                
     }

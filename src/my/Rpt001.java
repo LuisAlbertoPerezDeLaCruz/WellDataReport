@@ -54,6 +54,7 @@ public class Rpt001 extends javax.swing.JDialog {
     public long clienteId=0,campoId=0, macollaId=0,sectionSubTypeId=0;
     public long diameterId=0;
     public String tipoDT="";
+    public double bendHousingAngle=0;
     public Long[] aCorridas;
     public int cantCorridas;
     public Numeros oNumeros=new Numeros();
@@ -74,11 +75,18 @@ public class Rpt001 extends javax.swing.JDialog {
         oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),DrillingSubSectionType.class,this.jComboBoxDrillingSubType,"Select Sub-Section Type");
         oManejoDeCombos.llenaCombo(oBD,oManejoDeCombos.getModeloCombo(),Diameters.class,this.jComboBoxDiameter,"Select Hole Size [All]"); 
         oManejoDeCombos.setCombo(0, this.jComboBoxDiameter);
+        String s="SELECT DISTINCT (Round([TipoMotor].[bendHousingAngle],2)) AS angle\n" +
+                "FROM TipoMotor\n" +
+                "WHERE ((((Round([TipoMotor].[bendHousingAngle],2)))>0));";
+        oManejoDeCombos.llenaCombo(oBD, oManejoDeCombos.getModeloCombo(), s, jComboBoxBendHousingAngle,"All");
+        oManejoDeCombos.setCombo(0, this.jComboBoxBendHousingAngle);
         seteosIniciales(); 
         modeloCorridas=(DefaultTableModel) this.jTableCorridas.getModel();
         modeloSlideSheet=(DefaultTableModel) this.jTableSlideSheet.getModel();
         modeloLAS=(DefaultTableModel) this.jTableLAS.getModel();
         estadoDistanciaCtrls();
+        this.jComboBoxBendHousingAngle.setVisible(false);
+        this.jLabelBendHousingAngle.setVisible(false);
     }
     
     
@@ -182,6 +190,7 @@ public class Rpt001 extends javax.swing.JDialog {
     }
     
     private void buscarCorridas() {
+        double angleIn=0;
         String key="";
         String s;
         ResultSet rs;
@@ -200,15 +209,20 @@ public class Rpt001 extends javax.swing.JDialog {
         if (this.jRadioButtonTr.isSelected()) {
            key="Tr" ;
         }
-        
-//        s="SELECT DISTINCT clientesNombre, campoNombre, macollaNombre, wellNombre, sectionsNumeroIdentificador, runNumero, runId, md, tvd ";
-//        s+="FROM ConsultaCorridasPorCriteria1 WHERE "+key+" >=" + this.factorDesde + " AND "+key+"<=" + this.factorHasta ;
-//        s+=" AND clientesId="+clienteId + " AND drillingSubSectionId=" + this.sectionSubTypeId;
-        
+                       
         s="SELECT DISTINCT ConsultaCorridasPorCriteria1.clientesNombre, ConsultaCorridasPorCriteria1.campoNombre, ConsultaCorridasPorCriteria1.macollaNombre, ConsultaCorridasPorCriteria1.wellNombre, ConsultaCorridasPorCriteria1.sectionsNumeroIdentificador, ConsultaCorridasPorCriteria1.runNumero, ConsultaCorridasPorCriteria1.runId, ConsultaCorridasPorCriteria1.md, ConsultaCorridasPorCriteria1.tvd, Sections.diameterId, BHA.tipoDT\n" +
             "FROM (ConsultaCorridasPorCriteria1 INNER JOIN Sections ON ConsultaCorridasPorCriteria1.sectionsId = Sections.id) INNER JOIN BHA ON ConsultaCorridasPorCriteria1.runID = BHA.runId\n" +
             "WHERE "+key+" >=" + this.factorDesde + " AND "+key+"<=" + this.factorHasta ;
         s+=" AND clientesId="+clienteId + " AND drillingSubSectionId=" + this.sectionSubTypeId;
+        
+        if ("MOTOR".equals(tipoDT)){
+            if (bendHousingAngle>0) {
+                s="SELECT DISTINCT ConsultaCorridasPorCriteria1.clientesNombre, ConsultaCorridasPorCriteria1.campoNombre, ConsultaCorridasPorCriteria1.macollaNombre, ConsultaCorridasPorCriteria1.wellNombre, ConsultaCorridasPorCriteria1.sectionsNumeroIdentificador, ConsultaCorridasPorCriteria1.runNumero, ConsultaCorridasPorCriteria1.runId, ConsultaCorridasPorCriteria1.md, ConsultaCorridasPorCriteria1.tvd, Sections.diameterId, BHA.tipoDT, TipoMotor.bendHousingAngle\n" +
+                  "FROM TipoMotor INNER JOIN (DirectionalTool INNER JOIN ((ConsultaCorridasPorCriteria1 INNER JOIN Sections ON ConsultaCorridasPorCriteria1.sectionsId = Sections.id) INNER JOIN BHA ON ConsultaCorridasPorCriteria1.runID = BHA.runId) ON DirectionalTool.bhaId = BHA.id) ON TipoMotor.id = DirectionalTool.tipoMotorId\n" +
+                  "WHERE "+key+" >=" + this.factorDesde + " AND "+key+"<=" + this.factorHasta ;
+                s+=" AND clientesId="+clienteId + " AND drillingSubSectionId=" + this.sectionSubTypeId;
+            }
+        }
         
         if (key=="Tr") {
            switch (this.jComboBoxInclinacion.getSelectedIndex()) {
@@ -239,8 +253,7 @@ public class Rpt001 extends javax.swing.JDialog {
  
         if (! "".equals(tipoDT)) {
            s+=" AND tipoDT='"+tipoDT+"'"; 
-        }
-        
+        }      
         
         s+=";";       
         rs=oBD.select(s);
@@ -252,7 +265,13 @@ public class Rpt001 extends javax.swing.JDialog {
             aCorridas = new Long[i];
             i=0;
             rs.beforeFirst();
-            while (rs.next()) {                
+            while (rs.next()) {
+                if (bendHousingAngle>0) {
+                    angleIn=rs.getDouble("bendHousingAngle");
+                    if (Math.abs(bendHousingAngle-angleIn)>0.01){
+                        continue;
+                    }
+                }
                 modeloCorridas.setRowCount(i+1);
                 this.jTableCorridas.setValueAt(rs.getString("campoNombre"), i, 0); 
                 this.jTableCorridas.setValueAt(rs.getString("macollaNombre"), i, 1);
@@ -837,6 +856,8 @@ public class Rpt001 extends javax.swing.JDialog {
         jRadioButtonMotor = new javax.swing.JRadioButton();
         jRadioButtonRSS = new javax.swing.JRadioButton();
         jRadioButtonMotorAndRSS = new javax.swing.JRadioButton();
+        jComboBoxBendHousingAngle = new javax.swing.JComboBox();
+        jLabelBendHousingAngle = new javax.swing.JLabel();
         jScrollPaneCorridas = new javax.swing.JScrollPane();
         jTableCorridas = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
@@ -993,7 +1014,6 @@ public class Rpt001 extends javax.swing.JDialog {
 
         buttonGroup2.add(jRadioButtonBr);
         jRadioButtonBr.setText("BR");
-        jRadioButtonBr.setActionCommand("BR");
         jRadioButtonBr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonBrActionPerformed(evt);
@@ -1011,14 +1031,14 @@ public class Rpt001 extends javax.swing.JDialog {
                 jComboBoxInclinacionActionPerformed(evt);
             }
         });
-        jPanel1.add(jComboBoxInclinacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 10, 170, -1));
+        jPanel1.add(jComboBoxInclinacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 10, 150, -1));
 
         jComboBoxDiameter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxDiameterActionPerformed(evt);
             }
         });
-        jPanel1.add(jComboBoxDiameter, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 60, 210, -1));
+        jPanel1.add(jComboBoxDiameter, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 50, 190, -1));
 
         buttonGroup3.add(jRadioButtonMotor);
         jRadioButtonMotor.setText("Motor");
@@ -1027,7 +1047,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jRadioButtonMotorActionPerformed(evt);
             }
         });
-        jPanel1.add(jRadioButtonMotor, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 10, -1, -1));
+        jPanel1.add(jRadioButtonMotor, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 40, -1, -1));
 
         buttonGroup3.add(jRadioButtonRSS);
         jRadioButtonRSS.setText("RSS");
@@ -1036,7 +1056,7 @@ public class Rpt001 extends javax.swing.JDialog {
                 jRadioButtonRSSActionPerformed(evt);
             }
         });
-        jPanel1.add(jRadioButtonRSS, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 30, 50, -1));
+        jPanel1.add(jRadioButtonRSS, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 20, 50, -1));
 
         buttonGroup3.add(jRadioButtonMotorAndRSS);
         jRadioButtonMotorAndRSS.setSelected(true);
@@ -1046,9 +1066,19 @@ public class Rpt001 extends javax.swing.JDialog {
                 jRadioButtonMotorAndRSSActionPerformed(evt);
             }
         });
-        jPanel1.add(jRadioButtonMotorAndRSS, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 50, -1, -1));
+        jPanel1.add(jRadioButtonMotorAndRSS, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 0, -1, -1));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, 1100, 100));
+        jComboBoxBendHousingAngle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxBendHousingAngleActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jComboBoxBendHousingAngle, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 80, 100, 20));
+
+        jLabelBendHousingAngle.setText("Bend Housing Angle:");
+        jPanel1.add(jLabelBendHousingAngle, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 60, 130, -1));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 0, 1100, 110));
 
         jTableCorridas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -2396,15 +2426,29 @@ public class Rpt001 extends javax.swing.JDialog {
 
     private void jRadioButtonMotorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMotorActionPerformed
         tipoDT="MOTOR";
+        this.jComboBoxBendHousingAngle.setVisible(true);
+        this.jLabelBendHousingAngle.setVisible(true);
     }//GEN-LAST:event_jRadioButtonMotorActionPerformed
 
     private void jRadioButtonRSSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonRSSActionPerformed
         tipoDT="RSS";
+        this.jComboBoxBendHousingAngle.setVisible(false);
+        this.jLabelBendHousingAngle.setVisible(false);
     }//GEN-LAST:event_jRadioButtonRSSActionPerformed
 
     private void jRadioButtonMotorAndRSSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMotorAndRSSActionPerformed
         tipoDT="";
+        this.jComboBoxBendHousingAngle.setVisible(false);
+        this.jLabelBendHousingAngle.setVisible(false);
     }//GEN-LAST:event_jRadioButtonMotorAndRSSActionPerformed
+
+    private void jComboBoxBendHousingAngleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxBendHousingAngleActionPerformed
+        String val=this.jComboBoxBendHousingAngle.getSelectedItem().toString();
+        bendHousingAngle=0;
+        if (! "All".equals(val))
+            bendHousingAngle=Double.parseDouble(this.jComboBoxBendHousingAngle.getSelectedItem().toString());
+        int i=0;
+    }//GEN-LAST:event_jComboBoxBendHousingAngleActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2456,6 +2500,7 @@ public class Rpt001 extends javax.swing.JDialog {
     public javax.swing.JButton jButtonBuscarCorridas;
     private javax.swing.JButton jButtonCalcular;
     private javax.swing.JButton jButtonFiltrar;
+    private javax.swing.JComboBox jComboBoxBendHousingAngle;
     private javax.swing.JComboBox jComboBoxCampo;
     private javax.swing.JComboBox jComboBoxClientes;
     private javax.swing.JComboBox jComboBoxDiameter;
@@ -2470,6 +2515,7 @@ public class Rpt001 extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelBendHousingAngle;
     private javax.swing.JLabel jLabelDistancia;
     private javax.swing.JLabel jLabelGrafica;
     private javax.swing.JLabel jLabelLatitud;
